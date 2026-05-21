@@ -109,9 +109,8 @@ service cloud.firestore {
 
     // Posts collection rules
     match /posts/{postId} {
-      // Public can only read published posts. Admin can read all.
-      // For now, only admin can create/update/delete posts. This will be updated for approved users later.
-      allow read: if isPublishedPost(resource.data) || isAdmin() || isApprovedAuthor();
+      // Public can read published posts. Owners can read their own (drafts). Admins read all.
+      allow read: if isPublishedPost(resource.data) || isAdmin() || isOwner(resource.data.authorId);
 
       // Admin or approved authors can create posts
       allow create: if (isAdmin() || isApprovedAuthor()) && 
@@ -126,8 +125,8 @@ service cloud.firestore {
                        request.resource.data.authorId == resource.data.authorId &&
                        isValidPostData(request.resource.data);
       
-      // Only admin can delete posts initially
-      allow delete: if isAdmin();
+      // Admin can delete any post; Authors can delete their own thoughts
+      allow delete: if isAdmin() || isOwner(resource.data.authorId);
     }
 
     match /settings/{settingId} {

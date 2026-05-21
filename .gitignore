@@ -7,3 +7,4 @@ firebase-debug.log
 public/firestore.rules
 .cache/
 .gemini/
+.config/

@@ -40,3 +40,18 @@ git branch -M main
 git remote add origin https://github.com/aakash0101200/digital-sanctuary
 git push -u origin main
 # 1. Stage the changes (index.html, firestore.rules, etc.)
+git add .
+# 2. Commit the changes with a descriptive message
+git commit -m "chore: implement App Check and harden Firestore security rules"
+# 3. Push to your main branch
+git push origin main
+git rm -r --cached .config/
+git commit --amend --no-edit
+git push origin main
+git rm -r --cached .config
+git commit --amend --no-edit
+git push origin main
+git push origin main --force
+firebase deploy --only firestore:rules
+git push origin main --force
+# 1. Stage the changes in index.html and firestore.rules
