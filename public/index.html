@@ -294,6 +294,11 @@
 
         const app = initializeApp(firebaseConfig);
         
+        // Enable App Check Debugging for local development
+        if (location.hostname === "localhost" || location.hostname === "127.0.0.1") {
+            self.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
+        }
+
         // Initialize App Check to protect your API and Firestore
         const appCheck = initializeAppCheck(app, {
             provider: new ReCaptchaV3Provider('6LcmEfUsAAAAAMSVdevUV0Ya3Jr1QkP_2CT3TDcl'), // Replace with your actual reCAPTCHA v3 site key
