@@ -1,0 +1,51 @@
+{
+	"gemini": true,
+	"motd": {
+		"cloudBuildErrorAfter": 1594252800000,
+		"cloudBuildWarnAfter": 1590019200000,
+		"defaultNode10After": 1594252800000,
+		"minVersion": "3.0.5",
+		"node8DeploysDisabledAfter": 1613390400000,
+		"node8RuntimeDisabledAfter": 1615809600000,
+		"node8WarnAfter": 1600128000000,
+		"fetched": 1779306150867
+	},
+	"usage": true,
+	"analytics-uuid": "3d673489-19c1-40a2-8d97-6cf81533964d",
+	"user": {
+		"iss": "accounts.google.com",
+		"azp": "563584335869-fgrhgmd47bqnekij5i8b5pr03ho849e6.apps.googleusercontent.com",
+		"aud": "563584335869-fgrhgmd47bqnekij5i8b5pr03ho849e6.apps.googleusercontent.com",
+		"sub": "107968072635720245138",
+		"email": "learnwithak2004@gmail.com",
+		"email_verified": true,
+		"at_hash": "5uzIoq1HFy6Ro4j2bO545g",
+		"iat": 1778341495,
+		"exp": 1778345095
+	},
+	"tokens": {
+		"expires_at": 1779345826955,
+		"refresh_token": "1//0glSNex42da-7CgYIARAAGBASNwF-L9IrRjSMropRc154oX-BdlIHqZ7ww2M-9tmZA77cA0S19pTSvwFBNcI78zTdytk8k4VjKqM",
+		"scopes": [],
+		"access_token": "ya29.a0AQvPyIP7kq9NdVLWvgmyRLfdekIaSDhUj3NjC4t-DHYG5U5s1bC5XXN5KbUvDBsS7XuhlodV19Ydqq0l6st3MVmdm_5t5WeRJNRDjIiucqleDuTdDAKKY3BE40FUMRMbQ9uyJVFX-j_GkreMlk8V5Q8qTLg4N8Acyl-QPu32BW-dJf6d24_o4AQli12m7BDqvqcZmi45MF6cYgaCgYKAUYSARcSFQHGX2MiZF8KfVHJh_PLVvayiyC2SA0213",
+		"expires_in": 3599,
+		"scope": "openid https://www.googleapis.com/auth/cloudplatformprojects.readonly https://www.googleapis.com/auth/firebase https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/cloud-platform",
+		"token_type": "Bearer",
+		"id_token": "eyJhbGciOiJSUzI1NiIsImtpZCI6IjQxYjJlMTFmZjljYTI2ZTc4YzAyNWE5ZDRhNDI5Y2IwNjAxMzk1NmUiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJhY2NvdW50cy5nb29nbGUuY29tIiwiYXpwIjoiNTYzNTg0MzM1ODY5LWZncmhnbWQ0N2JxbmVraWo1aThiNXByMDNobzg0OWU2LmFwcHMuZ29vZ2xldXNlcmNvbnRlbnQuY29tIiwiYXVkIjoiNTYzNTg0MzM1ODY5LWZncmhnbWQ0N2JxbmVraWo1aThiNXByMDNobzg0OWU2LmFwcHMuZ29vZ2xldXNlcmNvbnRlbnQuY29tIiwic3ViIjoiMTA3OTY4MDcyNjM1NzIwMjQ1MTM4IiwiZW1haWwiOiJsZWFybndpdGhhazIwMDRAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsImF0X2hhc2giOiI5bDVhQVJNeUZDOVpYUW82TFExb0lBIiwiaWF0IjoxNzc5MzQyMjI3LCJleHAiOjE3NzkzNDU4Mjd9.OF6xAnpzbGpqTAJZ_Q_fKDeqlg6QAa_CyBkZpU7jH0XtSd9MMpmMTrKeVsZTAFkaQ25gDkpyeVmn65y2ql6bEnR7L8e6_RUZ0AYHqDY5XRRBO7V1MpPgrBOZLMD1MheIr6bWbDFM2P1gB4e2-5L6BW4WjnvGSdvF22ADrb_rd30jIYXt_BiivTUxdFk2YNhKX7O2db8LUQ-fKnCwLTII6OE3DFCCJUyxvXzPCmsmhkjrEN5odtykomQYhoO63mBByYb6eewVaxlMspB5XehItKZzZqrJaOQ--24D4U8NfD5JLChl7HkqUidKcDMqy0le4xzBy3wRAyhnbYPQaZ18Tg"
+	},
+	"loginScopes": [
+		"email",
+		"openid",
+		"https://www.googleapis.com/auth/cloudplatformprojects.readonly",
+		"https://www.googleapis.com/auth/firebase",
+		"https://www.googleapis.com/auth/cloud-platform"
+	],
+	"activeProjects": {
+		"/home/learnwithak2004": "digital-mindfulness"
+	},
+	"apiEnablementCache": {
+		"digital-mindfulness": {
+			"firestore.googleapis.com": true
+		}
+	}
+}

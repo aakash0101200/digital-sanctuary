@@ -1,0 +1,138 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // Collection: posts
+    // Document ID: auto-generated
+    // Fields:
+    //   - title: string (required, 1-200 chars)
+    //   - content: string (required, 1-10000 chars)
+    //   - authorId: string (required, immutable)
+    //   - status: string (required, 'draft' or 'published')
+    //   - createdAt: timestamp (required, immutable)
+    //
+    // Collection: settings
+    // Document ID: app_settings
+    // Fields:
+    //   - appTitle: string (required, 1-100 chars)
+    //
+    // Collection: users
+    // Document ID: user.uid
+    // Fields:
+    //   - uid: string (required, immutable)
+    //   - email: string (required, immutable)
+    //   - role: string (required) - ['admin', 'pending', 'author']
+    //   - approved: bool (required)
+    //   - createdAt: timestamp (required, immutable)
+    //
+    // ===============================================================
+
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+
+    function isAuthenticated() {
+       return request.auth != null;
+    }
+
+    function isOwner(userId) {
+        return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function hasRequiredFields(fields) {
+       return request.resource.data.keys().hasAll(fields);
+    }
+
+    function hasOnlyAllowedFields(fields) {
+      return request.resource.data.keys().hasOnly(fields);
+    }
+
+    // ===============================================================
+    // Domain Validators
+    // ===============================================================
+
+    function isValidPostData(data) {
+      return hasRequiredFields(['title', 'content', 'createdAt', 'authorId', 'status']) &&
+             data.title is string && data.title.size() > 0 && data.title.size() <= 200 &&
+             data.content is string && data.content.size() > 0 && data.content.size() <= 10000 &&
+             data.createdAt is timestamp &&
+             data.authorId == request.auth.uid &&
+             data.status is string && (data.status == 'draft' || data.status == 'published');
+    }
+    function isValidAppSettings(data) {
+      return hasRequiredFields(['appTitle']) &&
+             data.appTitle is string && data.appTitle.size() > 0 && data.appTitle.size() <= 100;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() && 
+             (request.auth.token.email == 'learnwithak2004@gmail.com' || 
+              get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin');
+    }
+
+    function isApprovedAuthor() {
+      return isAuthenticated() && 
+             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.approved == true;
+    }
+
+    function isValidUserRegistration(data) {
+        return data.uid == request.auth.uid &&
+               data.email == request.auth.token.email &&
+               data.role == 'pending' &&
+               data.approved == false &&
+               data.createdAt == request.time &&
+               request.resource.data.keys().hasOnly(['uid', 'email', 'role', 'approved', 'createdAt']);
+    }
+
+    // Users collection rules
+    match /users/{userId} {
+        // Only the user themselves can create their profile upon registration
+        allow create: if isOwner(userId) && isValidUserRegistration(request.resource.data);
+        // User can read own profile, admin can read all
+        allow read: if isOwner(userId) || isAdmin();
+        // Allow admins to update user roles and approval status
+        allow update: if isAdmin();
+        allow delete: if false;
+    }
+
+    function isPublishedPost(data) {
+      return data.status == 'published';
+    }
+
+    // Default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Posts collection rules
+    match /posts/{postId} {
+      // Public can only read published posts. Admin can read all.
+      // For now, only admin can create/update/delete posts. This will be updated for approved users later.
+      allow read: if isPublishedPost(resource.data) || isAdmin() || isApprovedAuthor();
+
+      // Admin or approved authors can create posts
+      allow create: if (isAdmin() || isApprovedAuthor()) && 
+                       hasOnlyAllowedFields(['title', 'content', 'createdAt', 'authorId', 'status']) &&
+                       isValidPostData(request.resource.data) &&
+                       request.resource.data.authorId == request.auth.uid;
+
+      // Admin can update any post, Authors can only update their own if still approved
+      allow update: if (isAdmin() || (isApprovedAuthor() && isOwner(resource.data.authorId))) &&
+                       // Prevent changing immutable fields
+                       request.resource.data.createdAt == resource.data.createdAt &&
+                       request.resource.data.authorId == resource.data.authorId &&
+                       isValidPostData(request.resource.data);
+      
+      // Only admin can delete posts initially
+      allow delete: if isAdmin();
+    }
+
+    match /settings/{settingId} {
+      allow read: if settingId == 'app_settings';
+      allow write: if isAdmin() && settingId == 'app_settings' && isValidAppSettings(request.resource.data);
+    }
+  }
+}
