@@ -55,3 +55,9 @@ git push origin main --force
 firebase deploy --only firestore:rules
 git push origin main --force
 # 1. Stage the changes in index.html and firestore.rules
+git add .
+# 2. Commit the changes with a clear description
+git commit -m "security: implement reCAPTCHA v3 and refine firestore rules for author management"
+# 3. Push the changes to your main branch
+git push origin main
+# 1. Stage the changes in index.html and firestore.rules
