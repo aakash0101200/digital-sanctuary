@@ -23,3 +23,20 @@ git push -u origin main
 git init
 git config user.name "aakash0101200"
 git config user.email "aakashkumargupta.cse27@jecrc.ac.in"
+git add .
+git commit -m "Initial commit: The Digital Sanctuary"
+git branch -M main
+git remote add origin https://github.com/aakash0101200/digital-sanctuary
+git push -u origin main
+git branch -M main
+git remote add origin https://github.com/aakash0101200/digital-sanctuary
+git push -u origin main
+git rm -r --cached .cache
+git commit --amend --no-edit
+git push -u origin main
+firebase deploy
+git push -u origin main
+git branch -M main
+git remote add origin https://github.com/aakash0101200/digital-sanctuary
+git push -u origin main
+# 1. Stage the changes (index.html, firestore.rules, etc.)
