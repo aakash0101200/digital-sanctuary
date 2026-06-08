@@ -56,8 +56,9 @@ service cloud.firestore {
 
     function isValidPostData(data) {
       return hasRequiredFields(['title', 'content', 'createdAt', 'authorId', 'status']) &&
-             data.title is string && data.title.size() > 0 && data.title.size() <= 200 &&
-             data.content is string && data.content.size() > 0 && data.content.size() <= 10000 &&
+             data.title is string && data.title.size() <= 200 &&
+             data.content is string && data.content.size() <= 10000 &&
+             (data.status == 'published' ? (data.title.size() > 0 && data.content.size() > 0) : (data.title.size() >= 0 && data.content.size() >= 0)) &&
              data.createdAt is timestamp &&
              data.authorId == request.auth.uid &&
              data.status is string && (data.status == 'draft' || data.status == 'published');
@@ -70,20 +71,22 @@ service cloud.firestore {
     function isAdmin() {
       return isAuthenticated() && 
              (request.auth.token.email == 'learnwithak2004@gmail.com' || 
-              get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin');
+              (exists(/databases/$(database)/documents/users/$(request.auth.uid)) && 
+               get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin'));
     }
 
     function isApprovedAuthor() {
       return isAuthenticated() && 
+             exists(/databases/$(database)/documents/users/$(request.auth.uid)) && 
              get(/databases/$(database)/documents/users/$(request.auth.uid)).data.approved == true;
     }
 
     function isValidUserRegistration(data) {
         return data.uid == request.auth.uid &&
-               data.email == request.auth.token.email &&
+               data.email is string &&
                data.role == 'pending' &&
                data.approved == false &&
-               data.createdAt == request.time &&
+               data.createdAt is timestamp &&
                request.resource.data.keys().hasOnly(['uid', 'email', 'role', 'approved', 'createdAt']);
     }
 

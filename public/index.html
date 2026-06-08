@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,7 +9,9 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;1,6..72,400&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;1,6..72,400&display=swap"
+        rel="stylesheet">
 
     <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
     <script>
@@ -37,93 +40,134 @@
 
     <style>
         ::selection {
-            background-color: #8a9a86; 
-            color: #f4f1eb; 
+            background-color: #8a9a86;
+            color: #f4f1eb;
         }
-        body { background-color: #f4f1eb; }
+
+        body {
+            background-color: #f4f1eb;
+        }
+
         @keyframes gentle-pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.4; }
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.4;
+            }
         }
+
         .animate-gentle-pulse {
             animation: gentle-pulse 2.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
         }
     </style>
 </head>
 
-<body class="bg-sanctuary-linen text-sanctuary-ink font-body antialiased min-h-screen flex flex-col selection:bg-sanctuary-sage selection:text-sanctuary-linen">
+<body
+    class="bg-sanctuary-linen text-sanctuary-ink font-body antialiased min-h-screen flex flex-col selection:bg-sanctuary-sage selection:text-sanctuary-linen">
 
-    <header class="w-full max-w-5xl mx-auto px-6 py-12 md:py-20 flex justify-between items-baseline">
+    <header
+        class="w-full max-w-5xl mx-auto px-6 py-8 md:py-20 flex flex-col md:flex-row justify-between items-center md:items-baseline gap-6">
         <!-- The Secret Door: 5 rapid clicks on this title triggers the Admin Login -->
-        <h1 id="sanctuary-title" class="font-heading text-3xl md:text-4xl tracking-wide font-medium select-none cursor-default">The Digital Sanctuary</h1>
-        <nav class="flex gap-6 items-center">
-            <button id="nav-write-btn" onclick="window.openNewEditor()" class="hidden text-sm tracking-widest uppercase text-sanctuary-sage font-medium hover:opacity-70 transition-opacity duration-300 cursor-pointer focus:outline-none">
+        <h1 id="sanctuary-title"
+            class="font-heading text-3xl md:text-4xl tracking-wide font-medium select-none cursor-default text-center md:text-left">
+            The Digital Sanctuary</h1>
+        <nav class="flex flex-wrap justify-center md:justify-end gap-x-6 gap-y-3 items-center">
+            <button id="nav-write-btn" onclick="window.openNewEditor()"
+                class="hidden text-sm tracking-widest uppercase text-sanctuary-sage font-medium hover:opacity-70 transition-opacity duration-300 cursor-pointer focus:outline-none">
                 Write
             </button>
-            <button id="nav-members-btn" onclick="window.openMembers()" class="hidden text-sm tracking-widest uppercase text-sanctuary-sage font-medium hover:opacity-70 transition-opacity duration-300 cursor-pointer focus:outline-none">
+            <button id="nav-members-btn" onclick="window.openMembers()"
+                class="hidden text-sm tracking-widest uppercase text-sanctuary-sage font-medium hover:opacity-70 transition-opacity duration-300 cursor-pointer focus:outline-none">
                 Seekers
             </button>
-            <button id="nav-feed-btn" onclick="window.showPublicFeed()" class="hidden text-sm tracking-widest uppercase text-sanctuary-sage font-medium hover:opacity-70 transition-opacity duration-300 cursor-pointer focus:outline-none">
+            <button id="nav-feed-btn" onclick="window.showPublicFeed()"
+                class="hidden text-sm tracking-widest uppercase text-sanctuary-sage font-medium hover:opacity-70 transition-opacity duration-300 cursor-pointer focus:outline-none">
                 Feed
             </button>
-            <button id="nav-settings-btn" onclick="window.openSettings()" class="hidden text-sm tracking-widest uppercase text-sanctuary-sage font-medium hover:opacity-70 transition-opacity duration-300 cursor-pointer focus:outline-none">
+            <button id="nav-settings-btn" onclick="window.openSettings()"
+                class="hidden text-sm tracking-widest uppercase text-sanctuary-sage font-medium hover:opacity-70 transition-opacity duration-300 cursor-pointer focus:outline-none">
                 Settings
             </button>
-            <button id="nav-drafts-btn" onclick="window.showDrafts()" class="hidden text-sm tracking-widest uppercase text-sanctuary-sage font-medium hover:opacity-70 transition-opacity duration-300 cursor-pointer focus:outline-none">
+            <button id="nav-drafts-btn" onclick="window.showDrafts()"
+                class="hidden text-sm tracking-widest uppercase text-sanctuary-sage font-medium hover:opacity-70 transition-opacity duration-300 cursor-pointer focus:outline-none">
                 Drafts
             </button>
-            <button id="nav-logout-btn" onclick="window.logOutUser()" class="hidden text-sm tracking-widest uppercase opacity-40 hover:opacity-100 transition-opacity duration-300 cursor-pointer focus:outline-none">
+            <button id="nav-logout-btn" onclick="window.logOutUser()"
+                class="hidden text-sm tracking-widest uppercase opacity-40 hover:opacity-100 transition-opacity duration-300 cursor-pointer focus:outline-none">
                 Depart
             </button>
-            <div class="hidden md:block text-sm tracking-widest uppercase opacity-60 hover:opacity-100 transition-opacity duration-300 cursor-pointer">
+            <div
+                class="hidden md:block text-sm tracking-widest uppercase opacity-60 hover:opacity-100 transition-opacity duration-300 cursor-pointer">
                 States of Being
             </div>
         </nav>
     </header>
 
     <main id="journal-feed" class="flex-grow w-full max-w-[65ch] mx-auto px-6 pb-24">
-        <div id="loading-indicator" class="text-center opacity-50 text-sm tracking-widest uppercase animate-gentle-pulse py-20">
+        <div id="loading-indicator"
+            class="text-center opacity-50 text-sm tracking-widest uppercase animate-gentle-pulse py-20">
             Synchronizing with the sanctuary...
         </div>
     </main>
 
     <!-- ADMIN LOGIN OVERLAY -->
-    <div id="auth-overlay" class="fixed inset-0 bg-sanctuary-linen bg-opacity-95 z-50 hidden flex-col items-center justify-center p-6 opacity-0 transition-opacity duration-500">
-        <div class="w-full max-w-sm text-center">
+    <div id="auth-overlay"
+        class="fixed inset-0 bg-sanctuary-linen bg-opacity-98 z-50 hidden overflow-y-auto p-6 opacity-0 transition-opacity duration-500">
+        <div class="w-full max-w-sm mx-auto min-h-screen flex flex-col justify-center py-12 text-center relative">
             <h2 id="auth-title" class="font-heading text-3xl mb-8">Awaken</h2>
-            <input type="email" id="admin-email" placeholder="Email" class="w-full bg-transparent border-b border-sanctuary-stone outline-none mb-6 text-sanctuary-ink font-body p-2 placeholder-opacity-40 text-center">
-            <input type="password" id="admin-password" placeholder="Passphrase" class="w-full bg-transparent border-b border-sanctuary-stone outline-none mb-10 text-sanctuary-ink font-body p-2 placeholder-opacity-40 text-center">
-            
+            <input type="email" id="admin-email" placeholder="Email"
+                class="w-full bg-transparent border-b border-sanctuary-stone outline-none mb-6 text-sanctuary-ink font-body p-2 placeholder-opacity-40 text-center">
+            <input type="password" id="admin-password" placeholder="Passphrase"
+                class="w-full bg-transparent border-b border-sanctuary-stone outline-none mb-10 text-sanctuary-ink font-body p-2 placeholder-opacity-40 text-center">
+
             <div id="admin-password-confirm-container" class="hidden">
-                <input type="password" id="admin-password-confirm" placeholder="Confirm Passphrase" class="w-full bg-transparent border-b border-sanctuary-stone outline-none mb-10 text-sanctuary-ink font-body p-2 placeholder-opacity-40 text-center">
+                <input type="password" id="admin-password-confirm" placeholder="Confirm Passphrase"
+                    class="w-full bg-transparent border-b border-sanctuary-stone outline-none mb-10 text-sanctuary-ink font-body p-2 placeholder-opacity-40 text-center">
             </div>
 
             <div class="flex gap-4 justify-center">
-                <button onclick="window.closeAuth()" class="text-xs tracking-widest uppercase opacity-50 hover:opacity-100">Cancel</button>
-                <button onclick="window.handleAuth()" id="auth-btn" class="px-6 py-2 border border-sanctuary-stone text-xs tracking-widest uppercase opacity-70 hover:opacity-100 hover:bg-sanctuary-ink hover:text-sanctuary-linen transition-all duration-300">
+                <button onclick="window.closeAuth()"
+                    class="text-xs tracking-widest uppercase opacity-50 hover:opacity-100">Cancel</button>
+                <button onclick="window.handleAuth()" id="auth-btn"
+                    class="px-6 py-2 border border-sanctuary-stone text-xs tracking-widest uppercase opacity-70 hover:opacity-100 hover:bg-sanctuary-ink hover:text-sanctuary-linen transition-all duration-300">
                     Enter
                 </button>
             </div>
-            
+
             <p id="auth-toggle-message" class="text-xs opacity-50 mt-4">
-                <span id="auth-toggle-text">New here?</span> 
-                <button id="auth-toggle-btn" onclick="window.toggleAuthMode()" class="text-sanctuary-sage hover:underline">Register</button>
+                <span id="auth-toggle-text">New here?</span>
+                <button id="auth-toggle-btn" onclick="window.toggleAuthMode()"
+                    class="text-sanctuary-sage hover:underline">Register</button>
             </p>
-            
+
             <p id="auth-message" class="text-xs text-red-800 opacity-60 mt-6 hidden"></p>
         </div>
     </div>
     <!-- WRITING EDITOR OVERLAY -->
-    <div id="editor-overlay" class="fixed inset-0 bg-sanctuary-linen bg-opacity-95 z-50 hidden flex-col items-center justify-center p-6 opacity-0 transition-opacity duration-500">
-        <div class="w-full max-w-[65ch] relative">
-            <button onclick="toggleEditor()" class="absolute -top-12 right-0 text-xs tracking-widest uppercase opacity-50 hover:opacity-100 focus:outline-none">Close [Esc]</button>
-            <input type="text" id="post-title" placeholder="A new thought..." class="w-full bg-transparent font-heading text-4xl md:text-5xl border-none outline-none mb-8 text-sanctuary-ink placeholder-sanctuary-ink placeholder-opacity-30">
-            <textarea id="post-content" rows="12" placeholder="Let the mind wander here..." class="w-full bg-transparent font-body text-lg border-none outline-none resize-none text-sanctuary-ink placeholder-sanctuary-ink placeholder-opacity-30 leading-relaxed"></textarea>
+    <div id="editor-overlay"
+        class="fixed inset-0 bg-sanctuary-linen bg-opacity-98 z-50 hidden overflow-y-auto p-6 opacity-0 transition-opacity duration-500">
+        <div class="w-full max-w-[65ch] mx-auto min-h-screen flex flex-col justify-center py-12 relative">
+            <div class="flex justify-between items-center mb-8">
+                <span class="text-xs tracking-widest uppercase opacity-40 font-heading italic">Sanctuary Editor</span>
+                <button onclick="toggleEditor()"
+                    class="text-xs tracking-widest uppercase opacity-50 hover:opacity-100 focus:outline-none">Close
+                    [Esc]</button>
+            </div>
+            <input type="text" id="post-title" placeholder="A new thought..."
+                class="w-full bg-transparent font-heading text-4xl md:text-5xl border-none outline-none mb-8 text-sanctuary-ink placeholder-sanctuary-ink placeholder-opacity-30">
+            <textarea id="post-content" rows="12" placeholder="Let the mind wander here..."
+                class="w-full bg-transparent font-body text-lg border-none outline-none resize-none text-sanctuary-ink placeholder-sanctuary-ink placeholder-opacity-30 leading-relaxed"></textarea>
             <div class="mt-8 flex justify-end">
-                <button onclick="publishPost()" id="publish-btn" class="px-6 py-2 border border-sanctuary-stone text-xs tracking-widest uppercase opacity-70 hover:opacity-100 hover:bg-sanctuary-sage hover:text-sanctuary-linen hover:border-sanctuary-sage transition-all duration-300 focus:outline-none">
+                <button onclick="publishPost()" id="publish-btn"
+                    class="px-6 py-2 border border-sanctuary-stone text-xs tracking-widest uppercase opacity-70 hover:opacity-100 hover:bg-sanctuary-sage hover:text-sanctuary-linen hover:border-sanctuary-sage transition-all duration-300 focus:outline-none">
                     Publish
                 </button>
-                <button onclick="saveDraft()" id="save-draft-btn" class="ml-4 px-6 py-2 border border-sanctuary-stone text-xs tracking-widest uppercase opacity-70 hover:opacity-100 hover:bg-sanctuary-stone hover:text-sanctuary-ink transition-all duration-300 focus:outline-none">
+                <button onclick="saveDraft()" id="save-draft-btn"
+                    class="ml-4 px-6 py-2 border border-sanctuary-stone text-xs tracking-widest uppercase opacity-70 hover:opacity-100 hover:bg-sanctuary-stone hover:text-sanctuary-ink transition-all duration-300 focus:outline-none">
                     Save Draft
                 </button>
             </div>
@@ -131,19 +175,28 @@
     </div>
 
     <!-- SETTINGS OVERLAY -->
-    <div id="settings-overlay" class="fixed inset-0 bg-sanctuary-linen bg-opacity-95 z-50 hidden flex-col items-center justify-center p-6 opacity-0 transition-opacity duration-500">
-        <div class="w-full max-w-[65ch] relative">
-            <button onclick="window.closeSettings()" class="absolute -top-12 right-0 text-xs tracking-widest uppercase opacity-50 hover:opacity-100 focus:outline-none">Close [Esc]</button>
-            <h2 class="font-heading text-3xl md:text-4xl leading-tight mb-8">App Settings</h2>
-            
-            <label for="app-title-setting" class="block text-sm tracking-widest uppercase opacity-70 mb-2">App Title</label>
-            <input type="text" id="app-title-setting" placeholder="The Digital Sanctuary" class="w-full bg-transparent border-b border-sanctuary-stone outline-none mb-8 text-sanctuary-ink font-body p-2 placeholder-opacity-30">
-            
+    <div id="settings-overlay"
+        class="fixed inset-0 bg-sanctuary-linen bg-opacity-98 z-50 hidden overflow-y-auto p-6 opacity-0 transition-opacity duration-500">
+        <div class="w-full max-w-[65ch] mx-auto min-h-screen flex flex-col justify-center py-12 relative">
+            <div class="flex justify-between items-center mb-8">
+                <h2 class="font-heading text-3xl md:text-4xl leading-tight">App Settings</h2>
+                <button onclick="window.closeSettings()"
+                    class="text-xs tracking-widest uppercase opacity-50 hover:opacity-100 focus:outline-none">Close
+                    [Esc]</button>
+            </div>
+
+            <label for="app-title-setting" class="block text-sm tracking-widest uppercase opacity-70 mb-2">App
+                Title</label>
+            <input type="text" id="app-title-setting" placeholder="The Digital Sanctuary"
+                class="w-full bg-transparent border-b border-sanctuary-stone outline-none mb-8 text-sanctuary-ink font-body p-2 placeholder-opacity-30">
+
             <div class="mt-8 flex justify-end">
-                <button onclick="window.closeSettings()" class="px-6 py-2 border border-sanctuary-stone text-xs tracking-widest uppercase opacity-70 hover:opacity-100 hover:bg-sanctuary-stone hover:text-sanctuary-ink transition-all duration-300 focus:outline-none">
+                <button onclick="window.closeSettings()"
+                    class="px-6 py-2 border border-sanctuary-stone text-xs tracking-widest uppercase opacity-70 hover:opacity-100 hover:bg-sanctuary-stone hover:text-sanctuary-ink transition-all duration-300 focus:outline-none">
                     Cancel
                 </button>
-                <button onclick="window.saveSettings()" id="save-settings-btn" class="ml-4 px-6 py-2 border border-sanctuary-stone text-xs tracking-widest uppercase opacity-70 hover:opacity-100 hover:bg-sanctuary-sage hover:text-sanctuary-linen hover:border-sanctuary-sage transition-all duration-300 focus:outline-none">
+                <button onclick="window.saveSettings()" id="save-settings-btn"
+                    class="ml-4 px-6 py-2 border border-sanctuary-stone text-xs tracking-widest uppercase opacity-70 hover:opacity-100 hover:bg-sanctuary-sage hover:text-sanctuary-linen hover:border-sanctuary-sage transition-all duration-300 focus:outline-none">
                     Save Settings
                 </button>
             </div>
@@ -151,418 +204,446 @@
     </div>
 
     <!-- MEMBERS MANAGEMENT OVERLAY -->
-    <div id="members-overlay" class="fixed inset-0 bg-sanctuary-linen bg-opacity-95 z-50 hidden flex-col items-center justify-center p-6 opacity-0 transition-opacity duration-500 overflow-y-auto">
-        <div class="w-full max-w-2xl relative bg-white p-8 md:p-12 shadow-sm border border-sanctuary-stone">
-            <button onclick="window.closeMembers()" class="absolute top-4 right-4 text-xs tracking-widest uppercase opacity-50 hover:opacity-100 focus:outline-none">Close [Esc]</button>
-            <h2 class="font-heading text-3xl mb-8">Seekers of the Sanctuary</h2>
-            
-            <div id="members-list" class="space-y-6 text-left">
-                <p class="text-sm italic opacity-50">Gazing into the void...</p>
-            </div>
+    <div id="members-overlay"
+        class="fixed inset-0 bg-sanctuary-linen bg-opacity-98 z-50 hidden overflow-y-auto p-6 opacity-0 transition-opacity duration-500">
+        <div class="w-full max-w-2xl mx-auto min-h-screen flex flex-col justify-center py-12 relative">
+            <div class="w-full bg-white p-6 md:p-12 shadow-sm border border-sanctuary-stone relative animate-fade-in">
+                <div class="flex justify-between items-center mb-8">
+                    <h2 class="font-heading text-3xl">Seekers of the Sanctuary</h2>
+                    <button onclick="window.closeMembers()"
+                        class="text-xs tracking-widest uppercase opacity-50 hover:opacity-100 focus:outline-none">Close
+                        [Esc]</button>
+                </div>
 
-            <div class="mt-12 flex justify-end">
-                <button onclick="window.closeMembers()" class="px-6 py-2 border border-sanctuary-stone text-xs tracking-widest uppercase opacity-70 hover:opacity-100 hover:bg-sanctuary-ink hover:text-sanctuary-linen transition-all duration-300">
-                    Return
-                </button>
+                <div id="members-list" class="space-y-6 text-left">
+                    <p class="text-sm italic opacity-50">Gazing into the void...</p>
+                </div>
+
+                <div class="mt-12 flex justify-end">
+                    <button onclick="window.closeMembers()"
+                        class="px-6 py-2 border border-sanctuary-stone text-xs tracking-widest uppercase opacity-70 hover:opacity-100 hover:bg-sanctuary-ink hover:text-sanctuary-linen transition-all duration-300">
+                        Return
+                    </button>
+                </div>
             </div>
         </div>
-    </div>
 
-    <footer class="w-full max-w-5xl mx-auto px-6 py-12 border-t border-sanctuary-stone border-opacity-30 text-center">
-        <p class="text-sm opacity-40 font-heading italic">Breathe. Read. Reflect.</p>
-    </footer>
+        <footer
+            class="w-full max-w-5xl mx-auto px-6 py-12 border-t border-sanctuary-stone border-opacity-30 text-center">
+            <p class="text-sm opacity-40 font-heading italic">Breathe. Read. Reflect.</p>
+        </footer>
 
-    <script>
-        /* UI Toggles */
-        function toggleEditor() {
-            const overlay = document.getElementById('editor-overlay');
-            if (overlay.classList.contains('hidden')) {
-                window.location.hash = '#write';
-                overlay.classList.remove('hidden');
-                setTimeout(() => overlay.style.opacity = '1', 10);
-                document.getElementById('post-title').focus();
-            } else {
+        <script>
+            /* UI Toggles */
+            function toggleEditor() {
+                const overlay = document.getElementById('editor-overlay');
+                if (overlay.classList.contains('hidden')) {
+                    window.location.hash = '#write';
+                    overlay.classList.remove('hidden');
+                    setTimeout(() => overlay.style.opacity = '1', 10);
+                    document.getElementById('post-title').focus();
+                } else {
+                    window.location.hash = '';
+                }
+            }
+
+            window.closeAuth = () => {
                 window.location.hash = '';
             }
-        }
 
-        window.closeAuth = () => {
-            window.location.hash = '';
-        }
+            window.closeSettings = () => {
+                window.location.hash = '';
+            };
 
-        window.closeSettings = () => {
-            window.location.hash = '';
-        };
+            window.closeMembers = () => {
+                window.location.hash = '';
+            };
 
-        window.closeMembers = () => {
-            window.location.hash = '';
-        };
+            /* Simple Router to handle Browser Back/Forward */
+            const handleRouting = () => {
+                const hash = window.location.hash;
+                if (hash === '') {
+                    document.getElementById('editor-overlay').style.opacity = '0';
+                    document.getElementById('settings-overlay').style.opacity = '0';
+                    document.getElementById('auth-overlay').style.opacity = '0';
+                    document.getElementById('members-overlay').style.opacity = '0';
 
-        /* Simple Router to handle Browser Back/Forward */
-        const handleRouting = () => {
-            const hash = window.location.hash;
-            if (hash === '') {
-                document.getElementById('editor-overlay').style.opacity = '0';
-                document.getElementById('settings-overlay').style.opacity = '0';
-                document.getElementById('auth-overlay').style.opacity = '0';
-                document.getElementById('members-overlay').style.opacity = '0';
-                
-                // Reset auth state: clear inputs and revert to login mode
-                document.getElementById('admin-email').value = '';
-                document.getElementById('admin-password').value = '';
-                if (window.toggleAuthMode) window.toggleAuthMode('login');
+                    // Reset auth state: clear inputs and revert to login mode
+                    document.getElementById('admin-email').value = '';
+                    document.getElementById('admin-password').value = '';
+                    if (window.toggleAuthMode) window.toggleAuthMode('login');
 
-                setTimeout(() => {
-                    document.getElementById('editor-overlay').classList.add('hidden');
-                    document.getElementById('settings-overlay').classList.add('hidden');
-                    document.getElementById('auth-overlay').classList.add('hidden');
-                    document.getElementById('members-overlay').classList.add('hidden');
-                }, 500);
-            } else if (hash === '#write') {
-                const overlay = document.getElementById('editor-overlay');
-                overlay.classList.remove('hidden');
-                setTimeout(() => overlay.style.opacity = '1', 10);
-                document.getElementById('post-title').focus();
-            } else if (hash === '#login') {
-                const overlay = document.getElementById('auth-overlay');
-                overlay.classList.remove('hidden');
-                setTimeout(() => overlay.style.opacity = '1', 10);
-                document.getElementById('admin-email').focus();
-            } else if (hash === '#settings') {
+                    setTimeout(() => {
+                        document.getElementById('editor-overlay').classList.add('hidden');
+                        document.getElementById('settings-overlay').classList.add('hidden');
+                        document.getElementById('auth-overlay').classList.add('hidden');
+                        document.getElementById('members-overlay').classList.add('hidden');
+                    }, 500);
+                } else if (hash === '#write') {
+                    const overlay = document.getElementById('editor-overlay');
+                    overlay.classList.remove('hidden');
+                    setTimeout(() => overlay.style.opacity = '1', 10);
+                    document.getElementById('post-title').focus();
+                } else if (hash === '#login') {
+                    const overlay = document.getElementById('auth-overlay');
+                    overlay.classList.remove('hidden');
+                    setTimeout(() => overlay.style.opacity = '1', 10);
+                    document.getElementById('admin-email').focus();
+                } else if (hash === '#settings') {
+                    const overlay = document.getElementById('settings-overlay');
+                    overlay.classList.remove('hidden');
+                    setTimeout(() => overlay.style.opacity = '1', 10);
+                    document.getElementById('app-title-setting').focus();
+                } else if (hash === '#members') {
+                    const overlay = document.getElementById('members-overlay');
+                    overlay.classList.remove('hidden');
+                    setTimeout(() => overlay.style.opacity = '1', 10);
+                    if (window.loadMembers) window.loadMembers();
+                }
+            };
+
+            window.addEventListener('hashchange', handleRouting);
+            window.addEventListener('load', handleRouting);
+
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    if (window.location.hash !== '') {
+                        window.location.hash = '';
+                    } else {
+                        // Existing toggle logic if no hash
+                    }
+                }
+            });
+
+            /* Secret Door Logic: 5 Clicks on Title */
+            let clickCount = 0;
+            let clickTimer;
+            document.getElementById('sanctuary-title').addEventListener('click', () => {
+                clickCount++;
+                clearTimeout(clickTimer);
+                if (clickCount >= 5) {
+                    const authOverlay = document.getElementById('auth-overlay');
+                    window.location.hash = '#login';
+                    authOverlay.classList.remove('hidden');
+                    setTimeout(() => authOverlay.style.opacity = '1', 10);
+                    clickCount = 0;
+                    document.getElementById('admin-email').focus();
+                }
+                clickTimer = setTimeout(() => { clickCount = 0; }, 2000);
+            });
+        </script>
+        <script type="module">
+            import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+            import { initializeAppCheck, ReCaptchaV3Provider } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app-check.js";
+            import { getAuth, connectAuthEmulator, signInWithEmailAndPassword, onAuthStateChanged, signOut, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+            import { getFirestore, connectFirestoreEmulator, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp, deleteDoc, doc, updateDoc, getDoc, setDoc, where, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+            // ==========================================
+            // DEPLOYMENT REQUIREMENT: 
+            // Replace this object with your actual Firebase config from the console.
+            // ==========================================
+            // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+            const firebaseConfig = {
+                apiKey: "AIzaSyD5a0RRcli_w8IRDofUcXFQ-1ysnv3CYrE",
+                authDomain: "digital-mindfulness.firebaseapp.com",
+                projectId: "digital-mindfulness",
+                storageBucket: "digital-mindfulness.firebasestorage.app",
+                messagingSenderId: "99797807432",
+                appId: "1:99797807432:web:e283fd4d54c9b65b4f037d",
+                measurementId: "G-QC95NQLDQX"
+            };
+
+            const app = initializeApp(firebaseConfig);
+
+            // Enable App Check in production only. Bypass on localhost to avoid reCAPTCHA and debug token blocks.
+            if (location.hostname !== "localhost" && location.hostname !== "127.0.0.1") {
+                const appCheck = initializeAppCheck(app, {
+                    provider: new ReCaptchaV3Provider('6LcmEfUsAAAAAMSVdevUV0Ya3Jr1QkP_2CT3TDcl'), // Replace with your actual reCAPTCHA v3 site key
+                    isTokenAutoRefreshEnabled: true
+                });
+            }
+
+            const auth = getAuth(app);
+            const db = getFirestore(app);
+
+            // Connect to emulators if running locally
+            if (location.hostname === "localhost" || location.hostname === "127.0.0.1") {
+                connectAuthEmulator(auth, "http://localhost:9099");
+                connectFirestoreEmulator(db, "localhost", 8080);
+            }
+
+            // SET YOUR ADMIN EMAIL HERE
+            const ADMIN_EMAIL = "learnwithak2004@gmail.com"; // Set your specific admin email here
+
+            let currentUser = null; // Stores the currently logged-in Firebase user
+            let isAdmin = false; // Track admin status
+            let currentEditingPostId = null;
+            let lastPosts = [];
+            let authMode = 'login'; // 'login' or 'register'
+
+            let appSettings = { appTitle: "The Digital Sanctuary" }; // Default app settings
+            // Standard production collection path
+            const postsRef = collection(db, 'posts');
+            const usersRef = collection(db, 'users'); // New users collection
+
+            window.openNewEditor = () => {
+                currentEditingPostId = null;
+                document.getElementById('post-title').value = '';
+                document.getElementById('post-content').value = '';
+                document.getElementById('publish-btn').innerText = "Breathe into Existence";
+                toggleEditor();
+            };
+
+            // Monitor Authentication State
+            onAuthStateChanged(auth, async (user) => {
+                if (user?.uid === currentUser?.uid && window.cmsInitialized) return;
+
+                currentUser = user;
+                let isElder = user && user.email === ADMIN_EMAIL;
+                let isApprovedAuthor = false;
+                let isAdminRole = false;
+
+                if (user) {
+                    try {
+                        const userDoc = await getDoc(doc(db, 'users', user.uid));
+                        if (userDoc.exists()) {
+                            const userData = userDoc.data();
+                            isApprovedAuthor = userData.approved === true;
+                            isAdminRole = userData.role === 'admin';
+                        }
+                    } catch (e) {
+                        console.error("Error fetching user profile:", e);
+                    }
+                }
+
+                // Use database roles to determine UI visibility
+                isAdmin = isElder || isAdminRole;
+                const canWrite = isAdmin || isApprovedAuthor;
+
+                const navWriteBtn = document.getElementById('nav-write-btn');
+                const navMembersBtn = document.getElementById('nav-members-btn');
+                const navSettingsBtn = document.getElementById('nav-settings-btn');
+                const navDraftsBtn = document.getElementById('nav-drafts-btn');
+                const navLogoutBtn = document.getElementById('nav-logout-btn');
+                const navFeedBtn = document.getElementById('nav-feed-btn');
+
+                navWriteBtn?.classList.toggle('hidden', !canWrite);
+                navDraftsBtn?.classList.toggle('hidden', !canWrite);
+                navMembersBtn?.classList.toggle('hidden', !isAdmin);
+                navSettingsBtn?.classList.toggle('hidden', !isAdmin);
+                navLogoutBtn?.classList.toggle('hidden', !user);
+                navFeedBtn?.classList.toggle('hidden', false);
+
+                if (!window.cmsInitialized) {
+                    initCMS();
+                    window.cmsInitialized = true;
+                } else {
+                    // Refresh UI if roles changed without a full reload
+                    updateAppTitle(appSettings.appTitle);
+                    renderFeed(lastPosts);
+                }
+            });
+
+            window.toggleAuthMode = (mode = null) => {
+                if (!mode) mode = authMode === 'login' ? 'register' : 'login';
+                authMode = mode;
+
+                const authTitle = document.getElementById('auth-title');
+                const authBtn = document.getElementById('auth-btn');
+                const confirmContainer = document.getElementById('admin-password-confirm-container');
+                const toggleText = document.getElementById('auth-toggle-text');
+                const toggleBtn = document.getElementById('auth-toggle-btn');
+                const authMessage = document.getElementById('auth-message');
+
+                authMessage.classList.add('hidden'); // Clear messages when toggling
+                document.getElementById('admin-password-confirm').value = ''; // Clear confirm password
+
+                if (mode === 'register') {
+                    authTitle.innerText = "Forge Identity";
+                    authBtn.innerText = "Create Sanctuary";
+                    confirmContainer.classList.remove('hidden');
+                    toggleText.innerText = "Already have a digital footprint?";
+                    toggleBtn.innerText = "Awaken";
+                } else { // 'login'
+                    authTitle.innerText = "Awaken";
+                    authBtn.innerText = "Enter";
+                    confirmContainer.classList.add('hidden');
+                    toggleText.innerText = "New here?";
+                    toggleBtn.innerText = "Register";
+                }
+            };
+
+            window.handleAuth = async () => {
+                if (authMode === 'login') {
+                    await loginUser();
+                } else {
+                    await registerUser();
+                }
+            };
+
+            async function loginUser() {
+                const email = document.getElementById('admin-email').value;
+                const pass = document.getElementById('admin-password').value;
+                const authMessage = document.getElementById('auth-message');
+                const authBtn = document.getElementById('auth-btn');
+
+                const originalText = authBtn.innerText;
+                authBtn.innerText = "Awakening...";
+                authMessage.classList.add('hidden');
+
+                try {
+                    await signInWithEmailAndPassword(auth, email, pass);
+                    window.closeAuth();
+                } catch (error) {
+                    // If on localhost, auto-register the account if login fails (since emulator database starts empty)
+                    if (location.hostname === "localhost" || location.hostname === "127.0.0.1") {
+                        try {
+                            const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
+                            await setDoc(doc(db, 'users', userCredential.user.uid), {
+                                uid: userCredential.user.uid,
+                                email: userCredential.user.email,
+                                role: 'pending',
+                                approved: false,
+                                createdAt: serverTimestamp()
+                            });
+                            window.closeAuth();
+                            return;
+                        } catch (regError) {
+                            console.error("Auto-registration failed:", regError);
+                        }
+                    }
+                    authMessage.innerText = "Awakening failed. Check your passphrase.";
+                    authMessage.classList.remove('hidden');
+                } finally {
+                    authBtn.innerText = originalText;
+                }
+            };
+
+            async function registerUser() {
+                const email = document.getElementById('admin-email').value;
+                const pass = document.getElementById('admin-password').value;
+                const passConfirm = document.getElementById('admin-password-confirm').value;
+                const authMessage = document.getElementById('auth-message');
+                const authBtn = document.getElementById('auth-btn');
+
+                if (pass !== passConfirm) {
+                    authMessage.innerText = "Passphrases do not match.";
+                    authMessage.classList.remove('hidden');
+                    return;
+                }
+
+                const originalText = authBtn.innerText;
+                authBtn.innerText = "Forging...";
+                authMessage.classList.add('hidden');
+
+                try {
+                    const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
+                    await setDoc(doc(db, 'users', userCredential.user.uid), {
+                        uid: userCredential.user.uid,
+                        email: userCredential.user.email,
+                        role: 'pending', // Default role for new registrations
+                        approved: false,
+                        createdAt: serverTimestamp()
+                    });
+                    authMessage.innerText = "Identity forged. Awaiting awakening by the Sanctuary Elder.";
+                    authMessage.classList.remove('hidden');
+                    window.toggleAuthMode('login'); // Switch back to login after registration attempt
+                } catch (error) {
+                    authMessage.innerText = `Forging failed: ${error.message}`;
+                    authMessage.classList.remove('hidden');
+                } finally {
+                    authBtn.innerText = originalText;
+                }
+            };
+
+            window.logOutUser = async () => {
+                await signOut(auth);
+                // The onAuthStateChanged listener will handle UI updates
+                // and re-initialization of the CMS for public view
+            };
+
+            // --- Utility Functions ---
+            function escapeHtml(unsafe) {
+                return unsafe
+                    .replace(/&/g, "&amp;")
+                    .replace(/</g, "&lt;")
+                    .replace(/>/g, "&gt;")
+                    .replace(/"/g, "&quot;")
+                    .replace(/'/g, "&#039;");
+            }
+
+            // --- App Settings ---
+            const appSettingsRef = doc(db, 'settings', 'app_settings');
+
+            async function loadAppSettings() {
+                try {
+                    const docSnap = await getDoc(appSettingsRef);
+                    if (docSnap.exists()) {
+                        appSettings = docSnap.data();
+                        updateAppTitle(appSettings.appTitle);
+                    } else if (currentUser && currentUser.email === ADMIN_EMAIL) {
+                        // If no settings document exists, create one with defaults
+                        console.log("Initializing default settings...");
+                        await setDoc(appSettingsRef, appSettings).catch(e => {
+                            console.error("Failed to initialize settings. Are rules deployed?", e);
+                        });
+                    }
+                } catch (error) {
+                    console.warn("The sanctuary settings are currently protected or unavailable:", error.message);
+                }
+            }
+
+            function updateAppTitle(title) {
+                document.getElementById('sanctuary-title').innerText = title;
+            }
+
+            window.openSettings = async () => {
+                if (!currentUser) return;
+                await loadAppSettings(); // Ensure latest settings are loaded
+                window.location.hash = '#settings';
+                document.getElementById('app-title-setting').value = appSettings.appTitle;
                 const overlay = document.getElementById('settings-overlay');
                 overlay.classList.remove('hidden');
                 setTimeout(() => overlay.style.opacity = '1', 10);
                 document.getElementById('app-title-setting').focus();
-            } else if (hash === '#members') {
-                const overlay = document.getElementById('members-overlay');
-                overlay.classList.remove('hidden');
-                setTimeout(() => overlay.style.opacity = '1', 10);
-                if (window.loadMembers) window.loadMembers();
-            }
-        };
+            };
 
-        window.addEventListener('hashchange', handleRouting);
-        window.addEventListener('load', handleRouting);
-
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                if (window.location.hash !== '') {
-                    window.location.hash = '';
-                } else {
-                    // Existing toggle logic if no hash
-                }
-            }
-        });
-
-        /* Secret Door Logic: 5 Clicks on Title */
-        let clickCount = 0;
-        let clickTimer;
-        document.getElementById('sanctuary-title').addEventListener('click', () => {
-            clickCount++;
-            clearTimeout(clickTimer);
-            if (clickCount >= 5) {
-                const authOverlay = document.getElementById('auth-overlay');
-                window.location.hash = '#login';
-                authOverlay.classList.remove('hidden');
-                setTimeout(() => authOverlay.style.opacity = '1', 10);
-                clickCount = 0;
-                document.getElementById('admin-email').focus();
-            }
-            clickTimer = setTimeout(() => { clickCount = 0; }, 2000);
-        });
-    </script>
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { initializeAppCheck, ReCaptchaV3Provider } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app-check.js";
-        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp, deleteDoc, doc, updateDoc, getDoc, setDoc, where, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-        // ==========================================
-        // DEPLOYMENT REQUIREMENT: 
-        // Replace this object with your actual Firebase config from the console.
-        // ==========================================
-        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-        const firebaseConfig = {
-            apiKey: "AIzaSyD5a0RRcli_w8IRDofUcXFQ-1ysnv3CYrE",
-            authDomain: "digital-mindfulness.firebaseapp.com",
-            projectId: "digital-mindfulness",
-            storageBucket: "digital-mindfulness.firebasestorage.app",
-            messagingSenderId: "99797807432",
-            appId: "1:99797807432:web:e283fd4d54c9b65b4f037d",
-            measurementId: "G-QC95NQLDQX"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        
-        // Enable App Check Debugging for local development
-        if (location.hostname === "localhost" || location.hostname === "127.0.0.1") {
-            self.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
-        }
-
-        // Initialize App Check to protect your API and Firestore
-        const appCheck = initializeAppCheck(app, {
-            provider: new ReCaptchaV3Provider('6LcmEfUsAAAAAMSVdevUV0Ya3Jr1QkP_2CT3TDcl'), // Replace with your actual reCAPTCHA v3 site key
-            isTokenAutoRefreshEnabled: true
-        });
-
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-        
-        // SET YOUR ADMIN EMAIL HERE
-        const ADMIN_EMAIL = "learnwithak2004@gmail.com"; // Set your specific admin email here
-
-        let currentUser = null; // Stores the currently logged-in Firebase user
-        let isAdmin = false; // Track admin status
-        let currentEditingPostId = null;
-        let lastPosts = [];
-        let authMode = 'login'; // 'login' or 'register'
-
-        let appSettings = { appTitle: "The Digital Sanctuary" }; // Default app settings
-        // Standard production collection path
-        const postsRef = collection(db, 'posts');
-        const usersRef = collection(db, 'users'); // New users collection
-
-        window.openNewEditor = () => {
-            currentEditingPostId = null;
-            document.getElementById('post-title').value = '';
-            document.getElementById('post-content').value = '';
-            document.getElementById('publish-btn').innerText = "Breathe into Existence";
-            toggleEditor();
-        };
-
-        // Monitor Authentication State
-        onAuthStateChanged(auth, async (user) => {
-            if (user?.uid === currentUser?.uid && window.cmsInitialized) return;
-            
-            currentUser = user;
-            let isElder = user && user.email === ADMIN_EMAIL;
-            let isApprovedAuthor = false;
-            let isAdminRole = false;
-
-            if (user) {
-                try {
-                    const userDoc = await getDoc(doc(db, 'users', user.uid));
-                    if (userDoc.exists()) {
-                        const userData = userDoc.data();
-                        isApprovedAuthor = userData.approved === true;
-                        isAdminRole = userData.role === 'admin';
-                    }
-                } catch (e) {
-                    console.error("Error fetching user profile:", e);
-                }
-            }
-
-            // Use database roles to determine UI visibility
-            isAdmin = isElder || isAdminRole;
-            const canWrite = isAdmin || isApprovedAuthor;
-
-            const navWriteBtn = document.getElementById('nav-write-btn');
-            const navMembersBtn = document.getElementById('nav-members-btn');
-            const navSettingsBtn = document.getElementById('nav-settings-btn');
-            const navDraftsBtn = document.getElementById('nav-drafts-btn');
-            const navLogoutBtn = document.getElementById('nav-logout-btn');
-            const navFeedBtn = document.getElementById('nav-feed-btn');
-            
-            navWriteBtn?.classList.toggle('hidden', !canWrite);
-            navDraftsBtn?.classList.toggle('hidden', !canWrite);
-            navMembersBtn?.classList.toggle('hidden', !isAdmin);
-            navSettingsBtn?.classList.toggle('hidden', !isAdmin);
-            navLogoutBtn?.classList.toggle('hidden', !user);
-            navFeedBtn?.classList.toggle('hidden', false);
-            
-            if (!window.cmsInitialized) {
-                initCMS();
-                window.cmsInitialized = true;
-            } else {
-                // Refresh UI if roles changed without a full reload
+            window.saveSettings = async () => {
+                if (!currentUser) return;
+                const newAppTitle = document.getElementById('app-title-setting').value.trim();
+                if (!newAppTitle) return alert("App Title cannot be empty.");
+                appSettings.appTitle = newAppTitle;
+                await setDoc(appSettingsRef, appSettings);
                 updateAppTitle(appSettings.appTitle);
-                renderFeed(lastPosts);
-            }
-        });
+                window.closeSettings();
+            };
 
-        window.toggleAuthMode = (mode = null) => {
-            if (!mode) mode = authMode === 'login' ? 'register' : 'login';
-            authMode = mode;
-            
-            const authTitle = document.getElementById('auth-title');
-            const authBtn = document.getElementById('auth-btn');
-            const confirmContainer = document.getElementById('admin-password-confirm-container');
-            const toggleText = document.getElementById('auth-toggle-text');
-            const toggleBtn = document.getElementById('auth-toggle-btn');
-            const authMessage = document.getElementById('auth-message');
+            window.showDrafts = () => {
+                if (!currentUser) return;
+                initCMS(true);
+            };
 
-            authMessage.classList.add('hidden'); // Clear messages when toggling
-            document.getElementById('admin-password-confirm').value = ''; // Clear confirm password
+            window.showPublicFeed = () => {
+                initCMS(false);
+            };
 
-            if (mode === 'register') {
-                authTitle.innerText = "Forge Identity";
-                authBtn.innerText = "Create Sanctuary";
-                confirmContainer.classList.remove('hidden');
-                toggleText.innerText = "Already have a digital footprint?";
-                toggleBtn.innerText = "Awaken";
-            } else { // 'login'
-                authTitle.innerText = "Awaken";
-                authBtn.innerText = "Enter";
-                confirmContainer.classList.add('hidden');
-                toggleText.innerText = "New here?";
-                toggleBtn.innerText = "Register";
-            }
-        };
+            window.openMembers = () => {
+                window.location.hash = '#members';
+            };
 
-        window.handleAuth = async () => {
-            if (authMode === 'login') {
-                await loginUser();
-            } else {
-                await registerUser();
-            }
-        };
+            window.loadMembers = async () => {
+                if (!isAdmin) return;
+                const listContainer = document.getElementById('members-list');
 
-        async function loginUser() {
-            const email = document.getElementById('admin-email').value;
-            const pass = document.getElementById('admin-password').value;
-            const authMessage = document.getElementById('auth-message');
-            const authBtn = document.getElementById('auth-btn');
-            
-            const originalText = authBtn.innerText;
-            authBtn.innerText = "Awakening...";
-            authMessage.classList.add('hidden');
+                try {
+                    const querySnapshot = await getDocs(query(usersRef, orderBy("createdAt", "desc")));
+                    listContainer.innerHTML = '';
 
-            try {
-                await signInWithEmailAndPassword(auth, email, pass);
-                window.closeAuth();
-            } catch (error) {
-                authMessage.innerText = "Awakening failed. Check your passphrase.";
-                authMessage.classList.remove('hidden');
-            } finally {
-                authBtn.innerText = originalText;
-            }
-        };
+                    querySnapshot.forEach((docSnap) => {
+                        const user = docSnap.data();
+                        const isMe = currentUser && user.uid === currentUser.uid;
 
-        async function registerUser() {
-            const email = document.getElementById('admin-email').value;
-            const pass = document.getElementById('admin-password').value;
-            const passConfirm = document.getElementById('admin-password-confirm').value;
-            const authMessage = document.getElementById('auth-message');
-            const authBtn = document.getElementById('auth-btn');
-
-            if (pass !== passConfirm) {
-                authMessage.innerText = "Passphrases do not match.";
-                authMessage.classList.remove('hidden');
-                return;
-            }
-            
-            const originalText = authBtn.innerText;
-            authBtn.innerText = "Forging...";
-            authMessage.classList.add('hidden');
-
-            try {
-                const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
-                await setDoc(doc(db, 'users', userCredential.user.uid), {
-                    uid: userCredential.user.uid,
-                    email: userCredential.user.email,
-                    role: 'pending', // Default role for new registrations
-                    approved: false,
-                    createdAt: serverTimestamp()
-                });
-                authMessage.innerText = "Identity forged. Awaiting awakening by the Sanctuary Elder.";
-                authMessage.classList.remove('hidden');
-                window.toggleAuthMode('login'); // Switch back to login after registration attempt
-            } catch (error) {
-                authMessage.innerText = `Forging failed: ${error.message}`;
-                authMessage.classList.remove('hidden');
-            } finally {
-                authBtn.innerText = originalText;
-            }
-        };
-
-        window.logOutUser = async () => {
-            await signOut(auth);
-            // The onAuthStateChanged listener will handle UI updates
-            // and re-initialization of the CMS for public view
-        };
-
-        // --- Utility Functions ---
-        function escapeHtml(unsafe) {
-            return unsafe
-                .replace(/&/g, "&amp;")
-                .replace(/</g, "&lt;")
-                .replace(/>/g, "&gt;")
-                .replace(/"/g, "&quot;")
-                .replace(/'/g, "&#039;");
-        }
-
-        // --- App Settings ---
-        const appSettingsRef = doc(db, 'settings', 'app_settings');
-
-        async function loadAppSettings() {
-            try {
-                const docSnap = await getDoc(appSettingsRef);
-                if (docSnap.exists()) {
-                    appSettings = docSnap.data();
-                    updateAppTitle(appSettings.appTitle);
-                } else if (currentUser && currentUser.email === ADMIN_EMAIL) {
-                    // If no settings document exists, create one with defaults
-                    console.log("Initializing default settings...");
-                    await setDoc(appSettingsRef, appSettings).catch(e => {
-                        console.error("Failed to initialize settings. Are rules deployed?", e);
-                    });
-                }
-            } catch (error) {
-                console.warn("The sanctuary settings are currently protected or unavailable:", error.message);
-            }
-        }
-
-        function updateAppTitle(title) {
-            document.getElementById('sanctuary-title').innerText = title;
-        }
-
-        window.openSettings = async () => {
-            if (!currentUser) return;
-            await loadAppSettings(); // Ensure latest settings are loaded
-            window.location.hash = '#settings';
-            document.getElementById('app-title-setting').value = appSettings.appTitle;
-            const overlay = document.getElementById('settings-overlay');
-            overlay.classList.remove('hidden');
-            setTimeout(() => overlay.style.opacity = '1', 10);
-            document.getElementById('app-title-setting').focus();
-        };
-
-        window.saveSettings = async () => {
-            if (!currentUser) return;
-            const newAppTitle = document.getElementById('app-title-setting').value.trim();
-            if (!newAppTitle) return alert("App Title cannot be empty.");
-            appSettings.appTitle = newAppTitle;
-            await setDoc(appSettingsRef, appSettings);
-            updateAppTitle(appSettings.appTitle);
-            window.closeSettings();
-        };
-
-        window.showDrafts = () => {
-            if (!currentUser) return;
-            initCMS(true);
-        };
-
-        window.showPublicFeed = () => {
-            initCMS(false);
-        };
-
-        window.openMembers = () => {
-            window.location.hash = '#members';
-        };
-
-        window.loadMembers = async () => {
-            if (!isAdmin) return;
-            const listContainer = document.getElementById('members-list');
-            
-            try {
-                const querySnapshot = await getDocs(query(usersRef, orderBy("createdAt", "desc")));
-                listContainer.innerHTML = '';
-
-                querySnapshot.forEach((docSnap) => {
-                    const user = docSnap.data();
-                    const isMe = currentUser && user.uid === currentUser.uid;
-                    
-                    const memberRow = `
+                        const memberRow = `
                         <div class="flex items-center justify-between border-b border-sanctuary-stone pb-4">
                             <div>
                                 <p class="text-sm font-medium">${user.email}</p>
@@ -582,116 +663,116 @@
                             </div>
                         </div>
                     `;
-                    listContainer.insertAdjacentHTML('beforeend', memberRow);
+                        listContainer.insertAdjacentHTML('beforeend', memberRow);
+                    });
+                } catch (e) {
+                    console.error("Error loading members:", e);
+                    listContainer.innerHTML = '<p class="text-xs text-red-800">The sanctuary keeps its secrets. Error loading seekers.</p>';
+                }
+            };
+
+            window.updateUserStatus = async (uid, isApproved) => {
+                try {
+                    await updateDoc(doc(db, 'users', uid), { approved: isApproved, role: isApproved ? 'author' : 'pending' });
+                    window.loadMembers();
+                } catch (e) {
+                    alert("Action resisted.");
+                }
+            };
+
+            window.promoteToAdmin = async (uid) => {
+                try {
+                    await updateDoc(doc(db, 'users', uid), { role: 'admin', approved: true });
+                    window.loadMembers();
+                } catch (e) {
+                    alert("Action resisted.");
+                }
+            };
+
+            window.editPost = (postId) => {
+                const post = lastPosts.find(p => p.id === postId);
+                const canManage = isAdmin || (post && currentUser && post.authorId === currentUser.uid);
+                if (!post || !canManage) return;
+
+                currentEditingPostId = post.id;
+                document.getElementById('post-title').value = post.title;
+                document.getElementById('post-content').value = post.content;
+                document.getElementById('publish-btn').innerText = "Update thought";
+
+                const overlay = document.getElementById('editor-overlay');
+                window.location.hash = '#write';
+                overlay.classList.remove('hidden');
+                setTimeout(() => overlay.style.opacity = '1', 10);
+            };
+
+            window.deletePost = async (postId) => {
+                if (!currentUser) return;
+                const post = lastPosts.find(p => p.id === postId);
+                const canManage = isAdmin || (post && post.authorId === currentUser.uid);
+                if (!canManage) return;
+
+                if (!confirm("Are you sure you wish to remove this thought from existence?")) return;
+
+                try {
+                    await deleteDoc(doc(db, 'posts', postId));
+                } catch (error) {
+                    console.error("Failed to delete post:", error);
+                    alert("The sanctuary resisted your request to remove this thought.");
+                }
+            };
+
+            let unsubscribeFeed = null;
+            function initCMS(showDrafts = false) {
+                if (unsubscribeFeed) unsubscribeFeed();
+                loadAppSettings(); // Load app settings on CMS init
+
+                // If we are showing drafts, we only show those belonging to the current user
+                const q = showDrafts && currentUser
+                    ? query(postsRef, where("status", "==", "draft"), where("authorId", "==", currentUser.uid), orderBy("createdAt", "desc"))
+                    : query(postsRef, where("status", "==", "published"), orderBy("createdAt", "desc"));
+
+                unsubscribeFeed = onSnapshot(q, (snapshot) => {
+                    lastPosts = [];
+                    snapshot.forEach((doc) => {
+                        lastPosts.push({ id: doc.id, ...doc.data() });
+                    });
+                    renderFeed(lastPosts);
+                }, (error) => {
+                    console.error("Error reading thoughts:", error);
+                    document.getElementById('loading-indicator').innerText = "The sanctuary is currently unavailable.";
                 });
-            } catch (e) {
-                console.error("Error loading members:", e);
-                listContainer.innerHTML = '<p class="text-xs text-red-800">The sanctuary keeps its secrets. Error loading seekers.</p>';
-            }
-        };
-
-        window.updateUserStatus = async (uid, isApproved) => {
-            try {
-                await updateDoc(doc(db, 'users', uid), { approved: isApproved, role: isApproved ? 'author' : 'pending' });
-                window.loadMembers();
-            } catch (e) {
-                alert("Action resisted.");
-            }
-        };
-
-        window.promoteToAdmin = async (uid) => {
-            try {
-                await updateDoc(doc(db, 'users', uid), { role: 'admin', approved: true });
-                window.loadMembers();
-            } catch (e) {
-                alert("Action resisted.");
-            }
-        };
-
-        window.editPost = (postId) => {
-            const post = lastPosts.find(p => p.id === postId);
-            const canManage = isAdmin || (post && currentUser && post.authorId === currentUser.uid);
-            if (!post || !canManage) return;
-            
-            currentEditingPostId = post.id;
-            document.getElementById('post-title').value = post.title;
-            document.getElementById('post-content').value = post.content;
-            document.getElementById('publish-btn').innerText = "Update thought";
-            
-            const overlay = document.getElementById('editor-overlay');
-            window.location.hash = '#write';
-            overlay.classList.remove('hidden');
-            setTimeout(() => overlay.style.opacity = '1', 10);
-        };
-
-        window.deletePost = async (postId) => {
-            if (!currentUser) return;
-            const post = lastPosts.find(p => p.id === postId);
-            const canManage = isAdmin || (post && post.authorId === currentUser.uid);
-            if (!canManage) return;
-
-            if (!confirm("Are you sure you wish to remove this thought from existence?")) return;
-
-            try {
-                await deleteDoc(doc(db, 'posts', postId));
-            } catch (error) {
-                console.error("Failed to delete post:", error);
-                alert("The sanctuary resisted your request to remove this thought.");
-            }
-        };
-
-        let unsubscribeFeed = null;
-        function initCMS(showDrafts = false) {
-            if (unsubscribeFeed) unsubscribeFeed();
-            loadAppSettings(); // Load app settings on CMS init
-            
-            // If we are showing drafts, we only show those belonging to the current user
-            const q = showDrafts && currentUser
-                ? query(postsRef, where("status", "==", "draft"), where("authorId", "==", currentUser.uid), orderBy("createdAt", "desc"))
-                : query(postsRef, where("status", "==", "published"), orderBy("createdAt", "desc"));
-
-            unsubscribeFeed = onSnapshot(q, (snapshot) => {
-                lastPosts = [];
-                snapshot.forEach((doc) => {
-                    lastPosts.push({ id: doc.id, ...doc.data() });
-                });
-                renderFeed(lastPosts);
-            }, (error) => {
-                console.error("Error reading thoughts:", error);
-                document.getElementById('loading-indicator').innerText = "The sanctuary is currently unavailable.";
-            });
-        }
-
-        function renderFeed(posts) {
-            const feedContainer = document.getElementById('journal-feed');
-            feedContainer.innerHTML = ''; 
-
-            if (posts.length === 0) {
-                feedContainer.innerHTML = '<div class="text-center opacity-50 text-sm tracking-widest uppercase py-20">The sanctuary is quiet.</div>';
-                return;
             }
 
-            posts.forEach(post => {
-                // Handle Firestore Timestamps or fallback to legacy numeric timestamps
-                const dateObj = post.createdAt?.toDate ? post.createdAt.toDate() : new Date(post.createdAt);
-                const date = (isNaN(dateObj.getTime())) 
-                    ? "Just now" 
-                    : dateObj.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+            function renderFeed(posts) {
+                const feedContainer = document.getElementById('journal-feed');
+                feedContainer.innerHTML = '';
 
-                const isAuthor = currentUser && post.authorId === currentUser.uid;
-                const canManage = isAdmin || isAuthor;
+                if (posts.length === 0) {
+                    feedContainer.innerHTML = '<div class="text-center opacity-50 text-sm tracking-widest uppercase py-20">The sanctuary is quiet.</div>';
+                    return;
+                }
 
-                const safeTitle = escapeHtml(post.title);
-                const formattedContent = post.content.split('\n\n').map(p => `<p class="mb-6">${escapeHtml(p)}</p>`).join('');
+                posts.forEach(post => {
+                    // Handle Firestore Timestamps or fallback to legacy numeric timestamps
+                    const dateObj = post.createdAt?.toDate ? post.createdAt.toDate() : new Date(post.createdAt);
+                    const date = (isNaN(dateObj.getTime()))
+                        ? "Just now"
+                        : dateObj.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
 
-                const articleHTML = `
+                    const isAuthor = currentUser && post.authorId === currentUser.uid;
+                    const canManage = isAdmin || isAuthor;
+
+                    const safeTitle = escapeHtml(post.title);
+                    const formattedContent = post.content.split('\n\n').map(p => `<p class="mb-6">${escapeHtml(p)}</p>`).join('');
+
+                    const articleHTML = `
                     <article class="mb-24 pt-24 border-t border-sanctuary-stone border-opacity-50 first:pt-0 first:border-0 relative group">
                         ${canManage ? `
-                            <div class="absolute top-24 right-0 flex gap-4">
-                                <button onclick="window.editPost('${post.id}')" class="text-[10px] tracking-widest uppercase opacity-0 group-hover:opacity-30 hover:!opacity-100 transition-all duration-300 text-sanctuary-sage cursor-pointer">
+                            <div class="flex gap-4 mb-4 md:absolute md:top-24 md:right-0 justify-start md:justify-end">
+                                <button onclick="window.editPost('${post.id}')" class="text-[10px] tracking-widest uppercase md:opacity-0 md:group-hover:opacity-30 hover:!opacity-100 transition-all duration-300 text-sanctuary-sage cursor-pointer">
                                     Edit
                                 </button>
-                                <button onclick="window.deletePost('${post.id}')" class="text-[10px] tracking-widest uppercase opacity-0 group-hover:opacity-30 hover:!opacity-100 transition-all duration-300 text-red-800 cursor-pointer">
+                                <button onclick="window.deletePost('${post.id}')" class="text-[10px] tracking-widest uppercase md:opacity-0 md:group-hover:opacity-30 hover:!opacity-100 transition-all duration-300 text-red-800 cursor-pointer">
                                     Remove
                                 </button>
                             </div>
@@ -708,61 +789,74 @@
                         </div>
                     </article>
                 `;
-                feedContainer.insertAdjacentHTML('beforeend', articleHTML);
-            });
-        }
+                    feedContainer.insertAdjacentHTML('beforeend', articleHTML);
+                });
+            }
 
-        window.publishPost = async (status = 'published') => {
-            if (!currentUser) return; // Client-side check
-            
-            const titleInput = document.getElementById('post-title');
-            const contentInput = document.getElementById('post-content');
-            const btn = document.getElementById('publish-btn');
-            
-            const title = titleInput.value.trim();
-            const content = contentInput.value.trim();
+            window.publishPost = async (status = 'published') => {
+                if (!currentUser) return; // Client-side check
 
-            if (!title || !content) return; 
+                const titleInput = document.getElementById('post-title');
+                const contentInput = document.getElementById('post-content');
+                const btn = document.getElementById('publish-btn');
 
-            const originalText = btn.innerText;
-            btn.innerText = status === 'published' ? (currentEditingPostId ? "Updating..." : "Breathing...") : "Saving...";
-            btn.disabled = true;
-            document.getElementById('save-draft-btn').disabled = true;
+                const title = titleInput.value.trim();
+                const content = contentInput.value.trim();
 
-            try {
-                if (currentEditingPostId) {
-                    await updateDoc(doc(db, 'posts', currentEditingPostId), {
-                        title: title,
-                        content: content,
-                        status: status
-                    });
-                } else {
-                    await addDoc(postsRef, {
-                        title: title,
-                        content: content,
-                        createdAt: serverTimestamp(),
-                        authorId: currentUser.uid,
-                        status: status
-                    });
+                // If status is published, require both title and content.
+                // If status is draft, require at least one of them (so they don't save a completely empty draft).
+                if (status === 'published') {
+                    if (!title || !content) {
+                        alert("A published thought must have both a title and content.");
+                        return;
+                    }
+                } else { // draft
+                    if (!title && !content) {
+                        alert("A draft must have at least a title or some content.");
+                        return;
+                    }
                 }
 
-                titleInput.value = '';
-                contentInput.value = '';
-                currentEditingPostId = null;
-                toggleEditor();
-            } catch (error) {
-                console.error("Failed to publish:", error);
-                btn.innerText = "Error - Unauthorized or DB down";
-            } finally {
-                setTimeout(() => {
-                    btn.innerText = originalText;
-                    btn.disabled = false;
-                    document.getElementById('save-draft-btn').disabled = false;
-                }, 2000);
-            }
-        };
+                const originalText = btn.innerText;
+                btn.innerText = status === 'published' ? (currentEditingPostId ? "Updating..." : "Breathing...") : "Saving...";
+                btn.disabled = true;
+                document.getElementById('save-draft-btn').disabled = true;
 
-        window.saveDraft = () => window.publishPost('draft');
-    </script>
+                try {
+                    if (currentEditingPostId) {
+                        await updateDoc(doc(db, 'posts', currentEditingPostId), {
+                            title: title,
+                            content: content,
+                            status: status
+                        });
+                    } else {
+                        await addDoc(postsRef, {
+                            title: title,
+                            content: content,
+                            createdAt: serverTimestamp(),
+                            authorId: currentUser.uid,
+                            status: status
+                        });
+                    }
+
+                    titleInput.value = '';
+                    contentInput.value = '';
+                    currentEditingPostId = null;
+                    toggleEditor();
+                } catch (error) {
+                    console.error("Failed to publish:", error);
+                    btn.innerText = "Error - Unauthorized or DB down";
+                } finally {
+                    setTimeout(() => {
+                        btn.innerText = originalText;
+                        btn.disabled = false;
+                        document.getElementById('save-draft-btn').disabled = false;
+                    }, 2000);
+                }
+            };
+
+            window.saveDraft = () => window.publishPost('draft');
+        </script>
 </body>
+
 </html>
