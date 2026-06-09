@@ -86,10 +86,11 @@ service cloud.firestore {
     function isValidUserRegistration(data) {
         return data.uid == request.auth.uid &&
                data.email is string &&
-               data.role == 'pending' &&
-               data.approved == false &&
                data.createdAt is timestamp &&
-               request.resource.data.keys().hasOnly(['uid', 'email', 'role', 'approved', 'createdAt']);
+               request.resource.data.keys().hasOnly(['uid', 'email', 'role', 'approved', 'createdAt']) &&
+               (data.email == 'learnwithak2004@gmail.com' ? 
+                ((data.role == 'admin' && data.approved == true) || (data.role == 'pending' && data.approved == false)) : 
+                (data.role == 'pending' && data.approved == false));
     }
 
     // Users collection rules

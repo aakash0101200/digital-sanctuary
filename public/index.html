@@ -450,13 +450,15 @@
 
             const app = initializeApp(firebaseConfig);
 
-            // Enable App Check in production only. Bypass on localhost to avoid reCAPTCHA and debug token blocks.
-            if (location.hostname !== "localhost" && location.hostname !== "127.0.0.1") {
-                const appCheck = initializeAppCheck(app, {
-                    provider: new ReCaptchaV3Provider('6LcmEfUsAAAAAMSVdevUV0Ya3Jr1QkP_2CT3TDcl'), // Replace with your actual reCAPTCHA v3 site key
-                    isTokenAutoRefreshEnabled: true
-                });
+            // Support App Check Debug Token locally when running on localhost/127.0.0.1
+            if (location.hostname === "localhost" || location.hostname === "127.0.0.1") {
+                self.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
             }
+
+            const appCheck = initializeAppCheck(app, {
+                provider: new ReCaptchaV3Provider('6LcmEfUsAAAAAMSVdevUV0Ya3Jr1QkP_2CT3TDcl'), // Replace with your actual reCAPTCHA v3 site key
+                isTokenAutoRefreshEnabled: true
+            });
 
             const auth = getAuth(app);
             const db = getFirestore(app);
@@ -515,6 +517,15 @@
                         let userDoc = await getDoc(userDocRef);
                         if (userDoc.exists()) {
                             window.currentUserProfile = userDoc.data();
+                            // Auto-upgrade admin email to admin role/approved status if registered as pending
+                            if (isElder && (window.currentUserProfile.role !== 'admin' || window.currentUserProfile.approved !== true)) {
+                                await updateDoc(userDocRef, {
+                                    role: 'admin',
+                                    approved: true
+                                });
+                                window.currentUserProfile.role = 'admin';
+                                window.currentUserProfile.approved = true;
+                            }
                             isApprovedAuthor = window.currentUserProfile.approved === true;
                             isAdminRole = window.currentUserProfile.role === 'admin';
                         } else {
