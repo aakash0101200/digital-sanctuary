@@ -172,6 +172,21 @@
                 </button>
             </div>
         </div>
+    <!-- GUARDIAN MODERATION OVERLAY -->
+    <div id="guardian-overlay"
+        class="fixed inset-0 bg-sanctuary-linen bg-opacity-98 z-[60] hidden overflow-y-auto p-6 opacity-0 transition-opacity duration-500">
+        <div class="w-full max-w-md mx-auto min-h-screen flex flex-col justify-center py-12 relative">
+            <div class="w-full bg-white p-8 md:p-12 shadow-sm border border-sanctuary-stone text-center">
+                <h2 class="font-heading text-3xl mb-6 text-sanctuary-sage">A Moment of Reflection</h2>
+                <p id="guardian-message" class="text-sm leading-relaxed mb-8 text-sanctuary-ink opacity-80"></p>
+                <div class="flex justify-center">
+                    <button onclick="closeGuardian()"
+                        class="px-6 py-2 border border-sanctuary-stone text-xs tracking-widest uppercase opacity-70 hover:opacity-100 hover:bg-sanctuary-ink hover:text-sanctuary-linen transition-all duration-300">
+                        Reframe Thought
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- SETTINGS OVERLAY -->
@@ -337,6 +352,7 @@
             import { initializeAppCheck, ReCaptchaV3Provider } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app-check.js";
             import { getAuth, connectAuthEmulator, signInWithEmailAndPassword, onAuthStateChanged, signOut, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
             import { getFirestore, connectFirestoreEmulator, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp, deleteDoc, doc, updateDoc, getDoc, setDoc, where, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+            import { getAI, getGenerativeModel, GoogleAIBackend } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-ai.js";
 
             // ==========================================
             // DEPLOYMENT REQUIREMENT: 
@@ -365,6 +381,15 @@
 
             const auth = getAuth(app);
             const db = getFirestore(app);
+
+            // Initialize AI Logic (Gemini Developer API)
+            const ai = getAI(app, { backend: new GoogleAIBackend() });
+            const aiModel = getGenerativeModel(ai, {
+                model: "gemini-flash-latest",
+                generationConfig: {
+                    responseMimeType: "application/json"
+                }
+            });
 
             // Connect to emulators if running locally
             if (location.hostname === "localhost" || location.hostname === "127.0.0.1") {
@@ -793,6 +818,48 @@
                 });
             }
 
+            // Helper function to check content using Gemini
+            async function checkContent(title, content) {
+                const prompt = `You are the Guardian of the Digital Sanctuary. Your role is to evaluate thoughts shared by seekers.
+The Sanctuary is a safe, non-judgmental space for sharing life perspectives, mindfulness, and personal insights.
+Evaluate the following post against our guidelines:
+1. NO HATE SPEECH OR HARASSMENT: Absolutely no slurs, personal attacks, bullying, discrimination, or hate speech.
+2. PERSONAL REFLECTION: Thoughts should be personal insights, philosophies, or reflections on life. They should not be pure spam, commercial advertisements, or illegal content.
+3. NO EXPLICIT CONTENT: Content must be safe for all readers (no graphic violence or sexually explicit material).
+4. RESPECTFUL EXPRESSION: While we do not judge personal opinions, we do not allow posts that attack or denigrate others.
+
+Post Title: "${title}"
+Post Content:
+"${content}"
+
+Respond strictly in JSON format with two fields:
+- "status": "approved" or "flagged"
+- "reason": A gentle, reflective, and non-judgmental explanation of why the post was flagged (leave empty if approved). Provide advice on how they can reframe their thought to align with the Sanctuary's spirit.`;
+
+                try {
+                    const result = await aiModel.generateContent(prompt);
+                    const responseText = result.response.text();
+                    const evaluation = JSON.parse(responseText);
+                    return evaluation;
+                } catch (e) {
+                    console.error("AI Content check failed, defaulting to approved:", e);
+                    return { status: "approved", reason: "" };
+                }
+            }
+
+            window.showGuardian = (message) => {
+                document.getElementById('guardian-message').innerText = message;
+                const overlay = document.getElementById('guardian-overlay');
+                overlay.classList.remove('hidden');
+                setTimeout(() => overlay.style.opacity = '1', 10);
+            };
+
+            window.closeGuardian = () => {
+                const overlay = document.getElementById('guardian-overlay');
+                overlay.style.opacity = '0';
+                setTimeout(() => overlay.classList.add('hidden'), 500);
+            };
+
             window.publishPost = async (status = 'published') => {
                 if (!currentUser) return; // Client-side check
 
@@ -821,6 +888,19 @@
                 btn.innerText = status === 'published' ? (currentEditingPostId ? "Updating..." : "Breathing...") : "Saving...";
                 btn.disabled = true;
                 document.getElementById('save-draft-btn').disabled = true;
+
+                // Run AI content check if publishing
+                if (status === 'published') {
+                    btn.innerText = "Reflecting...";
+                    const evaluation = await checkContent(title, content);
+                    if (evaluation.status === 'flagged') {
+                        btn.innerText = originalText;
+                        btn.disabled = false;
+                        document.getElementById('save-draft-btn').disabled = false;
+                        window.showGuardian(evaluation.reason);
+                        return;
+                    }
+                }
 
                 try {
                     if (currentEditingPostId) {

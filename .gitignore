@@ -8,3 +8,4 @@ public/firestore.rules
 .cache/
 .gemini/
 .config/
+firestore-debug.log
