@@ -61,7 +61,9 @@ service cloud.firestore {
              (data.status == 'published' ? (data.title.size() > 0 && data.content.size() > 0) : (data.title.size() >= 0 && data.content.size() >= 0)) &&
              data.createdAt is timestamp &&
              data.authorId == request.auth.uid &&
-             data.status is string && (data.status == 'draft' || data.status == 'published');
+             data.status is string && (data.status == 'draft' || data.status == 'published') &&
+             (!('authorName' in data) || (data.authorName is string && data.authorName.size() <= 50)) &&
+             (!('authorAvatar' in data) || (data.authorAvatar is string && data.authorAvatar.size() <= 30));
     }
     function isValidAppSettings(data) {
       return hasRequiredFields(['appTitle']) &&
@@ -96,8 +98,18 @@ service cloud.firestore {
         allow create: if isOwner(userId) && isValidUserRegistration(request.resource.data);
         // User can read own profile, admin can read all
         allow read: if isOwner(userId) || isAdmin();
-        // Allow admins to update user roles and approval status
-        allow update: if isAdmin();
+        // Allow admins to update user roles and approval status, and owner to update their own display name & avatar
+        allow update: if isAdmin() || 
+                         (isOwner(userId) && 
+                          request.resource.data.role == resource.data.role &&
+                          request.resource.data.approved == resource.data.approved &&
+                          request.resource.data.createdAt == resource.data.createdAt &&
+                          request.resource.data.email == resource.data.email &&
+                          request.resource.data.uid == resource.data.uid &&
+                          request.resource.data.keys().hasOnly(['uid', 'email', 'role', 'approved', 'createdAt', 'displayName', 'avatarId']) &&
+                          (!('displayName' in request.resource.data) || (request.resource.data.displayName is string && request.resource.data.displayName.size() <= 50)) &&
+                          (!('avatarId' in request.resource.data) || (request.resource.data.avatarId is string && request.resource.data.avatarId.size() <= 30))
+                         );
         allow delete: if false;
     }
 
@@ -117,12 +129,13 @@ service cloud.firestore {
 
       // Admin or approved authors can create posts
       allow create: if (isAdmin() || isApprovedAuthor()) && 
-                       hasOnlyAllowedFields(['title', 'content', 'createdAt', 'authorId', 'status']) &&
+                       hasOnlyAllowedFields(['title', 'content', 'createdAt', 'authorId', 'status', 'authorName', 'authorAvatar']) &&
                        isValidPostData(request.resource.data) &&
                        request.resource.data.authorId == request.auth.uid;
 
       // Admin can update any post, Authors can only update their own if still approved
       allow update: if (isAdmin() || (isApprovedAuthor() && isOwner(resource.data.authorId))) &&
+                       hasOnlyAllowedFields(['title', 'content', 'createdAt', 'authorId', 'status', 'authorName', 'authorAvatar']) &&
                        // Prevent changing immutable fields
                        request.resource.data.createdAt == resource.data.createdAt &&
                        request.resource.data.authorId == resource.data.authorId &&

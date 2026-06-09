@@ -96,6 +96,10 @@
                 class="hidden text-sm tracking-widest uppercase text-sanctuary-sage font-medium hover:opacity-70 transition-opacity duration-300 cursor-pointer focus:outline-none">
                 Drafts
             </button>
+            <button id="nav-profile-btn" onclick="window.openProfile()"
+                class="hidden text-sm tracking-widest uppercase text-sanctuary-sage font-medium hover:opacity-70 transition-opacity duration-300 cursor-pointer focus:outline-none">
+                Profile
+            </button>
             <button id="nav-logout-btn" onclick="window.logOutUser()"
                 class="hidden text-sm tracking-widest uppercase opacity-40 hover:opacity-100 transition-opacity duration-300 cursor-pointer focus:outline-none">
                 Depart
@@ -189,6 +193,70 @@
         </div>
     </div>
 
+    <!-- PROFILE OVERLAY -->
+    <div id="profile-overlay"
+        class="fixed inset-0 bg-sanctuary-linen bg-opacity-98 z-50 hidden overflow-y-auto p-6 opacity-0 transition-opacity duration-500">
+        <div class="w-full max-w-md mx-auto min-h-screen flex flex-col justify-center py-12 relative">
+            <div class="w-full bg-white p-8 md:p-12 shadow-sm border border-sanctuary-stone text-center relative">
+                <div class="flex justify-between items-center mb-8">
+                    <h2 class="font-heading text-3xl">Your Presence</h2>
+                    <button onclick="window.closeProfile()"
+                        class="text-xs tracking-widest uppercase opacity-50 hover:opacity-100 focus:outline-none">Close [Esc]</button>
+                </div>
+
+                <div class="mb-6 flex justify-center" id="profile-current-avatar-container">
+                    <!-- Current Avatar Preview -->
+                </div>
+
+                <div class="mb-6">
+                    <label for="profile-display-name" class="block text-[10px] tracking-widest uppercase opacity-50 mb-2 text-left">Display Name</label>
+                    <input type="text" id="profile-display-name" placeholder="Anonymous Seeker"
+                        class="w-full bg-transparent border-b border-sanctuary-stone outline-none text-sanctuary-ink font-body p-2 placeholder-opacity-30">
+                </div>
+
+                <div class="mb-8 p-4 bg-sanctuary-linen bg-opacity-40 border border-sanctuary-stone border-opacity-30 rounded-sm text-xs space-y-2 text-left">
+                    <div class="flex justify-between">
+                        <span class="opacity-50">Email:</span>
+                        <span id="profile-email-display" class="font-medium">-</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="opacity-50">Role:</span>
+                        <span id="profile-role-display" class="font-medium uppercase tracking-wider">-</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="opacity-50">Thoughts Shared:</span>
+                        <span id="profile-posts-count" class="font-medium">-</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="opacity-50">Sanctuary Status:</span>
+                        <span id="profile-status-display" class="font-medium">-</span>
+                    </div>
+                </div>
+
+                <!-- Avatar Selector Section -->
+                <div class="mb-8 text-left">
+                    <h3 class="block text-[10px] tracking-widest uppercase opacity-50 mb-4">Choose Emblem</h3>
+                    
+                    <div class="grid grid-cols-3 gap-4" id="avatar-grid-container">
+                        <!-- Curated Grid of Avatar Selections -->
+                    </div>
+                    <p id="avatar-unlock-message" class="text-[10px] opacity-60 mt-4 italic text-center"></p>
+                </div>
+
+                <div class="flex justify-end gap-4">
+                    <button onclick="window.closeProfile()"
+                        class="px-6 py-2 border border-sanctuary-stone text-xs tracking-widest uppercase opacity-50 hover:opacity-100 transition-all duration-300">
+                        Cancel
+                    </button>
+                    <button onclick="window.saveProfile()" id="save-profile-btn"
+                        class="px-6 py-2 border border-sanctuary-stone text-xs tracking-widest uppercase opacity-70 hover:opacity-100 hover:bg-sanctuary-sage hover:text-sanctuary-linen hover:border-sanctuary-sage transition-all duration-300">
+                        Save Profile
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- SETTINGS OVERLAY -->
     <div id="settings-overlay"
         class="fixed inset-0 bg-sanctuary-linen bg-opacity-98 z-50 hidden overflow-y-auto p-6 opacity-0 transition-opacity duration-500">
@@ -274,6 +342,10 @@
                 window.location.hash = '';
             };
 
+            window.closeProfile = () => {
+                window.location.hash = '';
+            };
+
             /* Simple Router to handle Browser Back/Forward */
             const handleRouting = () => {
                 const hash = window.location.hash;
@@ -282,6 +354,7 @@
                     document.getElementById('settings-overlay').style.opacity = '0';
                     document.getElementById('auth-overlay').style.opacity = '0';
                     document.getElementById('members-overlay').style.opacity = '0';
+                    document.getElementById('profile-overlay').style.opacity = '0';
 
                     // Reset auth state: clear inputs and revert to login mode
                     document.getElementById('admin-email').value = '';
@@ -293,6 +366,7 @@
                         document.getElementById('settings-overlay').classList.add('hidden');
                         document.getElementById('auth-overlay').classList.add('hidden');
                         document.getElementById('members-overlay').classList.add('hidden');
+                        document.getElementById('profile-overlay').classList.add('hidden');
                     }, 500);
                 } else if (hash === '#write') {
                     const overlay = document.getElementById('editor-overlay');
@@ -314,6 +388,11 @@
                     overlay.classList.remove('hidden');
                     setTimeout(() => overlay.style.opacity = '1', 10);
                     if (window.loadMembers) window.loadMembers();
+                } else if (hash === '#profile') {
+                    const overlay = document.getElementById('profile-overlay');
+                    overlay.classList.remove('hidden');
+                    setTimeout(() => overlay.style.opacity = '1', 10);
+                    if (window.openProfile) window.openProfile();
                 }
             };
 
@@ -419,6 +498,8 @@
                 toggleEditor();
             };
 
+            window.currentUserProfile = null;
+
             // Monitor Authentication State
             onAuthStateChanged(auth, async (user) => {
                 if (user?.uid === currentUser?.uid && window.cmsInitialized) return;
@@ -430,15 +511,31 @@
 
                 if (user) {
                     try {
-                        const userDoc = await getDoc(doc(db, 'users', user.uid));
+                        const userDocRef = doc(db, 'users', user.uid);
+                        let userDoc = await getDoc(userDocRef);
                         if (userDoc.exists()) {
-                            const userData = userDoc.data();
-                            isApprovedAuthor = userData.approved === true;
-                            isAdminRole = userData.role === 'admin';
+                            window.currentUserProfile = userDoc.data();
+                            isApprovedAuthor = window.currentUserProfile.approved === true;
+                            isAdminRole = window.currentUserProfile.role === 'admin';
+                        } else {
+                            // If user document does not exist, initialize it
+                            const defaultProfile = {
+                                uid: user.uid,
+                                email: user.email,
+                                role: isElder ? 'admin' : 'pending',
+                                approved: isElder ? true : false,
+                                createdAt: serverTimestamp()
+                            };
+                            await setDoc(userDocRef, defaultProfile);
+                            window.currentUserProfile = defaultProfile;
+                            isApprovedAuthor = window.currentUserProfile.approved === true;
+                            isAdminRole = window.currentUserProfile.role === 'admin';
                         }
                     } catch (e) {
-                        console.error("Error fetching user profile:", e);
+                        console.error("Error fetching/initializing user profile:", e);
                     }
+                } else {
+                    window.currentUserProfile = null;
                 }
 
                 // Use database roles to determine UI visibility
@@ -450,12 +547,14 @@
                 const navSettingsBtn = document.getElementById('nav-settings-btn');
                 const navDraftsBtn = document.getElementById('nav-drafts-btn');
                 const navLogoutBtn = document.getElementById('nav-logout-btn');
+                const navProfileBtn = document.getElementById('nav-profile-btn');
                 const navFeedBtn = document.getElementById('nav-feed-btn');
 
                 navWriteBtn?.classList.toggle('hidden', !canWrite);
                 navDraftsBtn?.classList.toggle('hidden', !canWrite);
                 navMembersBtn?.classList.toggle('hidden', !isAdmin);
                 navSettingsBtn?.classList.toggle('hidden', !isAdmin);
+                navProfileBtn?.classList.toggle('hidden', !user);
                 navLogoutBtn?.classList.toggle('hidden', !user);
                 navFeedBtn?.classList.toggle('hidden', false);
 
@@ -768,6 +867,103 @@
                 });
             }
 
+            let selectedAvatarId = 'default';
+            let isAvatarUnlocked = false;
+
+            window.getAvatarSVG = (avatarId, initials = '?', sizeClass = 'w-10 h-10') => {
+                const safeInitials = (initials || '?').split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+                if (avatarId === 'lotus') {
+                    return `
+                    <div class="${sizeClass} flex-shrink-0 select-none">
+                        <svg class="w-full h-full" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <linearGradient id="grad-lotus" x1="0%" y1="100%" x2="100%" y2="0%">
+                                    <stop offset="0%" stop-color="#8a9a86" />
+                                    <stop offset="100%" stop-color="#dfcfbe" />
+                                </linearGradient>
+                            </defs>
+                            <circle cx="50" cy="50" r="48" fill="url(#grad-lotus)" fill-opacity="0.15" stroke="url(#grad-lotus)" stroke-width="1.5" />
+                            <path d="M50 25 C40 45 45 65 50 75 C55 65 60 45 50 25 Z" stroke="url(#grad-lotus)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                            <path d="M50 45 C35 52 32 68 45 74 C43 62 48 52 50 45 Z" stroke="url(#grad-lotus)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                            <path d="M50 45 C65 52 68 68 55 74 C57 62 52 52 50 45 Z" stroke="url(#grad-lotus)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                            <path d="M50 58 C25 60 22 72 35 75 C35 68 45 62 50 58 Z" stroke="url(#grad-lotus)" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" />
+                            <path d="M50 58 C75 60 78 72 65 75 C65 68 55 62 50 58 Z" stroke="url(#grad-lotus)" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </div>`;
+                }
+                if (avatarId === 'crescent') {
+                    return `
+                    <div class="${sizeClass} flex-shrink-0 select-none">
+                        <svg class="w-full h-full" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <linearGradient id="grad-crescent" x1="0%" y1="100%" x2="100%" y2="0%">
+                                    <stop offset="0%" stop-color="#4f46e5" />
+                                    <stop offset="100%" stop-color="#f43f5e" />
+                                </linearGradient>
+                            </defs>
+                            <circle cx="50" cy="50" r="48" fill="url(#grad-crescent)" fill-opacity="0.1" stroke="url(#grad-crescent)" stroke-width="1.5" />
+                            <path d="M60 35 A22 22 0 1 0 60 65 A28 28 0 1 1 60 35 Z" fill="url(#grad-crescent)" fill-opacity="0.3" stroke="url(#grad-crescent)" stroke-width="2" stroke-linejoin="round" />
+                            <path d="M62 42 L64 47 L69 47 L65 50 L66 55 L62 52 L58 55 L59 50 L55 47 L60 47 Z" fill="url(#grad-crescent)" />
+                        </svg>
+                    </div>`;
+                }
+                if (avatarId === 'ripple') {
+                    return `
+                    <div class="${sizeClass} flex-shrink-0 select-none">
+                        <svg class="w-full h-full" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <linearGradient id="grad-ripple" x1="0%" y1="100%" x2="100%" y2="0%">
+                                    <stop offset="0%" stop-color="#0d9488" />
+                                    <stop offset="100%" stop-color="#38bdf8" />
+                                </linearGradient>
+                            </defs>
+                            <circle cx="50" cy="50" r="48" fill="url(#grad-ripple)" fill-opacity="0.1" stroke="url(#grad-ripple)" stroke-width="1.5" />
+                            <circle cx="50" cy="50" r="12" stroke="url(#grad-ripple)" stroke-width="2" />
+                            <circle cx="50" cy="50" r="24" stroke="url(#grad-ripple)" stroke-width="1.5" stroke-dasharray="4 3" />
+                            <circle cx="50" cy="50" r="36" stroke="url(#grad-ripple)" stroke-width="1" />
+                        </svg>
+                    </div>`;
+                }
+                if (avatarId === 'sol') {
+                    return `
+                    <div class="${sizeClass} flex-shrink-0 select-none">
+                        <svg class="w-full h-full" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <linearGradient id="grad-sol" x1="0%" y1="100%" x2="100%" y2="0%">
+                                    <stop offset="0%" stop-color="#ea580c" />
+                                    <stop offset="100%" stop-color="#eab308" />
+                                </linearGradient>
+                            </defs>
+                            <circle cx="50" cy="50" r="48" fill="url(#grad-sol)" fill-opacity="0.15" stroke="url(#grad-sol)" stroke-width="1.5" />
+                            <circle cx="50" cy="50" r="16" fill="url(#grad-sol)" fill-opacity="0.2" stroke="url(#grad-sol)" stroke-width="2" />
+                            <path d="M50 15 L50 25 M50 75 L50 85 M15 50 L25 50 M75 50 L85 50" stroke="url(#grad-sol)" stroke-width="2" stroke-linecap="round" />
+                            <path d="M25 25 L32 32 M68 68 L75 75 M25 75 L32 68 M68 32 L75 25" stroke="url(#grad-sol)" stroke-width="1.5" stroke-linecap="round" />
+                        </svg>
+                    </div>`;
+                }
+                if (avatarId === 'breath') {
+                    return `
+                    <div class="${sizeClass} flex-shrink-0 select-none">
+                        <svg class="w-full h-full" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <linearGradient id="grad-breath" x1="0%" y1="100%" x2="100%" y2="0%">
+                                    <stop offset="0%" stop-color="#ec4899" />
+                                    <stop offset="100%" stop-color="#f43f5e" />
+                                </linearGradient>
+                            </defs>
+                            <circle cx="50" cy="50" r="48" fill="url(#grad-breath)" fill-opacity="0.08" stroke="url(#grad-breath)" stroke-width="1.5" />
+                            <circle cx="43" cy="50" r="20" stroke="url(#grad-breath)" stroke-width="2.5" stroke-opacity="0.8" />
+                            <circle cx="57" cy="50" r="20" stroke="url(#grad-breath)" stroke-width="2.5" stroke-opacity="0.8" />
+                        </svg>
+                    </div>`;
+                }
+                // Default monogram
+                return `
+                <div class="${sizeClass} flex-shrink-0 flex items-center justify-center rounded-full bg-sanctuary-stone border border-sanctuary-stone border-opacity-40 text-sanctuary-ink font-heading text-xs tracking-wider font-semibold select-none shadow-inner">
+                    ${safeInitials}
+                </div>`;
+            };
+
             function renderFeed(posts) {
                 const feedContainer = document.getElementById('journal-feed');
                 feedContainer.innerHTML = '';
@@ -803,9 +999,15 @@
                             </div>
                         ` : ''}
                         <header class="mb-8">
-                            <div class="flex items-center gap-4 text-xs tracking-widest uppercase opacity-50 mb-4">
-                                <time>${date}</time>
-                                ${post.status === 'draft' ? '<span class="text-[10px] text-sanctuary-sage border border-sanctuary-sage px-1">Draft</span>' : ''}
+                            <div class="flex items-center gap-3 mb-6">
+                                ${window.getAvatarSVG(post.authorAvatar || 'default', post.authorName || '?', 'w-9 h-9')}
+                                <div class="flex flex-col text-left">
+                                    <span class="text-xs font-heading font-medium tracking-wide text-sanctuary-ink">${escapeHtml(post.authorName || 'Anonymous Seeker')}</span>
+                                    <div class="flex items-center gap-2 text-[10px] tracking-widest uppercase opacity-50">
+                                        <time>${date}</time>
+                                        ${post.status === 'draft' ? '<span class="text-[9px] text-sanctuary-sage border border-sanctuary-sage px-1 leading-none">Draft</span>' : ''}
+                                    </div>
+                                </div>
                             </div>
                             <h2 class="font-heading text-4xl md:text-5xl leading-tight mb-6">${safeTitle}</h2>
                         </header>
@@ -902,12 +1104,17 @@ Respond strictly in JSON format with two fields:
                     }
                 }
 
+                const authorName = window.currentUserProfile?.displayName || currentUser.email.split('@')[0];
+                const authorAvatar = window.currentUserProfile?.avatarId || 'default';
+
                 try {
                     if (currentEditingPostId) {
                         await updateDoc(doc(db, 'posts', currentEditingPostId), {
                             title: title,
                             content: content,
-                            status: status
+                            status: status,
+                            authorName: authorName,
+                            authorAvatar: authorAvatar
                         });
                     } else {
                         await addDoc(postsRef, {
@@ -915,7 +1122,9 @@ Respond strictly in JSON format with two fields:
                             content: content,
                             createdAt: serverTimestamp(),
                             authorId: currentUser.uid,
-                            status: status
+                            status: status,
+                            authorName: authorName,
+                            authorAvatar: authorAvatar
                         });
                     }
 
@@ -936,6 +1145,193 @@ Respond strictly in JSON format with two fields:
             };
 
             window.saveDraft = () => window.publishPost('draft');
+
+            // --- Profile Methods ---
+            window.openProfile = async () => {
+                if (!currentUser) return;
+                
+                // Ensure profile doc exists
+                const userDocRef = doc(db, 'users', currentUser.uid);
+                let userDoc = await getDoc(userDocRef);
+                
+                if (!userDoc.exists()) {
+                    const isElder = currentUser.email === ADMIN_EMAIL;
+                    const defaultProfile = {
+                        uid: currentUser.uid,
+                        email: currentUser.email,
+                        role: isElder ? 'admin' : 'pending',
+                        approved: isElder ? true : false,
+                        createdAt: serverTimestamp()
+                    };
+                    await setDoc(userDocRef, defaultProfile);
+                    window.currentUserProfile = defaultProfile;
+                } else {
+                    window.currentUserProfile = userDoc.data();
+                }
+                
+                // Query total published posts by this author to determine loyalty status
+                let postsCount = 0;
+                try {
+                    const q = query(postsRef, where("authorId", "==", currentUser.uid), where("status", "==", "published"));
+                    const querySnapshot = await getDocs(q);
+                    postsCount = querySnapshot.size;
+                } catch (e) {
+                    console.error("Error fetching user posts count:", e);
+                }
+
+                const isElder = currentUser.email === ADMIN_EMAIL;
+                const isAdminRole = window.currentUserProfile.role === 'admin';
+                const isApproved = window.currentUserProfile.approved === true;
+                const hasLoyalty = postsCount >= 3;
+                
+                isAvatarUnlocked = isElder || isAdminRole || isApproved || hasLoyalty;
+                selectedAvatarId = window.currentUserProfile.avatarId || 'default';
+
+                // Update UI fields
+                document.getElementById('profile-display-name').value = window.currentUserProfile.displayName || currentUser.email.split('@')[0];
+                document.getElementById('profile-email-display').innerText = currentUser.email;
+                document.getElementById('profile-role-display').innerText = window.currentUserProfile.role;
+                document.getElementById('profile-posts-count').innerText = `${postsCount} / 3 published`;
+                
+                let statusText = "";
+                if (isElder || isAdminRole) {
+                    statusText = "Sanctuary Elder (All Emblems Unlocked)";
+                } else if (isApproved) {
+                    statusText = "Approved Seeker (All Emblems Unlocked)";
+                } else if (hasLoyalty) {
+                    statusText = "Loyal Seeker (All Emblems Unlocked)";
+                } else {
+                    statusText = "Pending Approval (Share 3 thoughts to unlock)";
+                }
+                document.getElementById('profile-status-display').innerText = statusText;
+
+                const unlockMessageEl = document.getElementById('avatar-unlock-message');
+                if (isAvatarUnlocked) {
+                    unlockMessageEl.innerText = "Premium emblems are unlocked! Your presence is felt.";
+                    unlockMessageEl.className = "text-[10px] text-sanctuary-sage mt-4 font-medium text-center";
+                } else {
+                    unlockMessageEl.innerText = `Premium emblems unlock after Elder approval or publishing 3 thoughts (Need ${3 - postsCount} more).`;
+                    unlockMessageEl.className = "text-[10px] text-red-800 opacity-60 mt-4 italic text-center";
+                }
+
+                // Render Selected Avatar Preview
+                window.updateAvatarPreview();
+
+                // Render Grid
+                window.renderAvatarGrid();
+
+                window.location.hash = '#profile';
+            };
+
+            window.selectProfileAvatar = (avatarId) => {
+                if (avatarId !== 'default' && !isAvatarUnlocked) return;
+                selectedAvatarId = avatarId;
+                window.updateAvatarPreview();
+                window.renderAvatarGrid();
+            };
+
+            window.updateAvatarPreview = () => {
+                const initials = (currentUser.email || '?').substring(0, 2);
+                const container = document.getElementById('profile-current-avatar-container');
+                container.innerHTML = window.getAvatarSVG(selectedAvatarId, initials, 'w-20 h-20');
+            };
+
+            window.renderAvatarGrid = () => {
+                const gridContainer = document.getElementById('avatar-grid-container');
+                gridContainer.innerHTML = '';
+
+                // Option 1: Default
+                const initials = (currentUser.email || '?').substring(0, 2);
+                const isDefaultSelected = (selectedAvatarId === 'default');
+                const defaultOption = `
+                <div onclick="window.selectProfileAvatar('default')" class="cursor-pointer p-2 flex flex-col items-center justify-center border ${isDefaultSelected ? 'border-sanctuary-sage bg-sanctuary-linen bg-opacity-40' : 'border-transparent hover:border-sanctuary-stone'} rounded-md transition-all duration-300">
+                    ${window.getAvatarSVG('default', initials, 'w-12 h-12')}
+                    <span class="text-[9px] tracking-widest uppercase opacity-50 mt-2">Default</span>
+                </div>`;
+                gridContainer.insertAdjacentHTML('beforeend', defaultOption);
+
+                // Premium items
+                const premiumAvatars = [
+                    { id: 'lotus', name: 'Lotus' },
+                    { id: 'crescent', name: 'Crescent' },
+                    { id: 'ripple', name: 'Ripple' },
+                    { id: 'sol', name: 'Sol' },
+                    { id: 'breath', name: 'Breath' }
+                ];
+
+                premiumAvatars.forEach(av => {
+                    const isSelected = selectedAvatarId === av.id;
+                    const isLocked = !isAvatarUnlocked;
+                    
+                    let avHTML = '';
+                    if (isLocked) {
+                        avHTML = `
+                        <div class="relative p-2 flex flex-col items-center justify-center border border-transparent opacity-40 select-none cursor-not-allowed">
+                            <div class="relative w-12 h-12">
+                                ${window.getAvatarSVG(av.id, '', 'w-full h-full')}
+                                <div class="absolute bottom-0 right-0 bg-white rounded-full p-0.5 shadow-sm border border-sanctuary-stone">
+                                    <svg class="w-2.5 h-2.5 text-sanctuary-ink opacity-70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                                </div>
+                            </div>
+                            <span class="text-[9px] tracking-widest uppercase opacity-40 mt-2">${av.name}</span>
+                        </div>`;
+                    } else {
+                        avHTML = `
+                        <div onclick="window.selectProfileAvatar('${av.id}')" class="cursor-pointer p-2 flex flex-col items-center justify-center border ${isSelected ? 'border-sanctuary-sage bg-sanctuary-linen bg-opacity-40' : 'border-transparent hover:border-sanctuary-stone'} rounded-md transition-all duration-300">
+                            ${window.getAvatarSVG(av.id, '', 'w-12 h-12')}
+                            <span class="text-[9px] tracking-widest uppercase opacity-60 mt-2">${av.name}</span>
+                        </div>`;
+                    }
+                    gridContainer.insertAdjacentHTML('beforeend', avHTML);
+                });
+            };
+
+            window.saveProfile = async () => {
+                if (!currentUser || !window.currentUserProfile) return;
+                
+                const saveBtn = document.getElementById('save-profile-btn');
+                const originalText = saveBtn.innerText;
+                saveBtn.innerText = "Saving...";
+                saveBtn.disabled = true;
+
+                const nameInput = document.getElementById('profile-display-name').value.trim();
+                const newDisplayName = nameInput || currentUser.email.split('@')[0];
+
+                try {
+                    await updateDoc(doc(db, 'users', currentUser.uid), {
+                        displayName: newDisplayName,
+                        avatarId: selectedAvatarId
+                    });
+                    
+                    // Update current profile representation
+                    window.currentUserProfile.displayName = newDisplayName;
+                    window.currentUserProfile.avatarId = selectedAvatarId;
+
+                    // Update existing posts asynchronously to reflect new profile display
+                    try {
+                        const postsQuery = query(postsRef, where("authorId", "==", currentUser.uid));
+                        const postsSnapshot = await getDocs(postsQuery);
+                        const batchPromises = [];
+                        postsSnapshot.forEach((postDoc) => {
+                            batchPromises.push(updateDoc(doc(db, 'posts', postDoc.id), {
+                                authorName: newDisplayName,
+                                authorAvatar: selectedAvatarId
+                            }));
+                        });
+                        await Promise.all(batchPromises);
+                    } catch (postsErr) {
+                        console.warn("Could not update some of seeker's past posts:", postsErr);
+                    }
+
+                    window.closeProfile();
+                } catch (e) {
+                    console.error("Failed to save profile:", e);
+                    alert("The sanctuary resisted your profile update.");
+                } finally {
+                    saveBtn.innerText = originalText;
+                    saveBtn.disabled = false;
+                }
+            };
         </script>
 </body>
 
