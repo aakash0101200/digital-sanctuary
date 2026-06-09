@@ -1,0 +1,30 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+::selection {
+    background-color: #8a9a86;
+    color: #f4f1eb;
+}
+
+body {
+    background-color: #f4f1eb;
+}
+
+@keyframes gentle-pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.4;
+    }
+}
+
+.animate-gentle-pulse {
+    animation: gentle-pulse 2.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Custom transitions and scroll behaviors */
+.modal-fade-in {
+    transition: opacity 500s ease-in-out;
+}

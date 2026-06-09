@@ -1,0 +1,102 @@
+import React from 'react';
+import Emblem from './Emblem';
+
+export default function Feed({
+    posts,
+    loading,
+    isAdmin,
+    currentUser,
+    onEditPost,
+    onDeletePost,
+    activeRoute
+}) {
+    if (loading) {
+        return (
+            <main className="flex-grow w-full max-w-[65ch] mx-auto px-6 pb-24">
+                <div className="text-center opacity-50 text-sm tracking-widest uppercase animate-gentle-pulse py-20">
+                    Synchronizing with the sanctuary...
+                </div>
+            </main>
+        );
+    }
+
+    if (posts.length === 0) {
+        return (
+            <main className="flex-grow w-full max-w-[65ch] mx-auto px-6 pb-24">
+                <div className="text-center opacity-50 text-sm tracking-widest uppercase py-20">
+                    {activeRoute === 'drafts' ? 'No drafts are currently written.' : 'The sanctuary is quiet.'}
+                </div>
+            </main>
+        );
+    }
+
+    return (
+        <main className="flex-grow w-full max-w-[65ch] mx-auto px-6 pb-24">
+            {posts.map(post => {
+                const dateObj = post.createdAt?.toDate ? post.createdAt.toDate() : new Date(post.createdAt);
+                const dateText = isNaN(dateObj.getTime())
+                    ? "Just now"
+                    : dateObj.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+
+                const isAuthor = currentUser && post.authorId === currentUser.uid;
+                const canManage = isAdmin || isAuthor;
+
+                const paragraphs = post.content.split('\n\n');
+
+                return (
+                    <article
+                        key={post.id}
+                        className="mb-24 pt-24 border-t border-sanctuary-stone border-opacity-50 first:pt-0 first:border-0 relative group"
+                    >
+                        {canManage && (
+                            <div className="flex gap-4 mb-4 md:absolute md:top-24 md:right-0 justify-start md:justify-end">
+                                <button
+                                    onClick={() => onEditPost(post)}
+                                    className="text-[10px] tracking-widest uppercase md:opacity-0 md:group-hover:opacity-30 hover:!opacity-100 transition-all duration-300 text-sanctuary-sage cursor-pointer focus:outline-none"
+                                >
+                                    Edit
+                                </button>
+                                <button
+                                    onClick={() => onDeletePost(post.id)}
+                                    className="text-[10px] tracking-widest uppercase md:opacity-0 md:group-hover:opacity-30 hover:!opacity-100 transition-all duration-300 text-red-800 cursor-pointer focus:outline-none"
+                                >
+                                    Remove
+                                </button>
+                            </div>
+                        )}
+                        <header className="mb-8">
+                            <div className="flex items-center gap-3 mb-6">
+                                <Emblem
+                                    avatarId={post.authorAvatar || 'default'}
+                                    initials={post.authorName || '?'}
+                                    sizeClass="w-9 h-9"
+                                />
+                                <div className="flex flex-col text-left">
+                                    <span className="text-xs font-heading font-medium tracking-wide text-sanctuary-ink">
+                                        {post.authorName || 'Anonymous Seeker'}
+                                    </span>
+                                    <div className="flex items-center gap-2 text-[10px] tracking-widest uppercase opacity-50">
+                                        <time>{dateText}</time>
+                                        {post.status === 'draft' && (
+                                            <span className="text-[9px] text-sanctuary-sage border border-sanctuary-sage px-1 leading-none">
+                                                Draft
+                                            </span>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+                            <h2 className="font-heading text-4xl md:text-5xl leading-tight mb-6">
+                                {post.title}
+                            </h2>
+                        </header>
+                        <div className="prose prose-lg prose-p:text-sanctuary-ink prose-p:leading-relaxed prose-p:font-light article-content">
+                            {paragraphs.map((p, idx) => (
+                                <p key={idx} className="mb-6">{p}</p>
+                            ))}
+                        </div>
+                    </article>
+                );
+            })}
+        </main>
+    );
+}
