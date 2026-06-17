@@ -1,5 +1,6 @@
 import React from 'react';
 import Emblem from './Emblem';
+import { getFrequencyById } from '../constants/frequencies';
 
 export default function Feed({
     posts,
@@ -8,30 +9,37 @@ export default function Feed({
     currentUser,
     onEditPost,
     onDeletePost,
-    activeRoute
+    activeRoute,
+    hideOuterWrapper = false
 }) {
     if (loading) {
-        return (
+        const loadingContent = (
+            <div className="text-center opacity-50 text-sm tracking-widest uppercase animate-gentle-pulse py-20">
+                Synchronizing with the sanctuary...
+            </div>
+        );
+        return hideOuterWrapper ? loadingContent : (
             <main className="flex-grow w-full max-w-[65ch] mx-auto px-6 pb-24">
-                <div className="text-center opacity-50 text-sm tracking-widest uppercase animate-gentle-pulse py-20">
-                    Synchronizing with the sanctuary...
-                </div>
+                {loadingContent}
             </main>
         );
     }
 
     if (posts.length === 0) {
-        return (
+        const emptyContent = (
+            <div className="text-center opacity-50 text-sm tracking-widest uppercase py-20">
+                {activeRoute === 'drafts' ? 'No drafts are currently written.' : 'The sanctuary is quiet.'}
+            </div>
+        );
+        return hideOuterWrapper ? emptyContent : (
             <main className="flex-grow w-full max-w-[65ch] mx-auto px-6 pb-24">
-                <div className="text-center opacity-50 text-sm tracking-widest uppercase py-20">
-                    {activeRoute === 'drafts' ? 'No drafts are currently written.' : 'The sanctuary is quiet.'}
-                </div>
+                {emptyContent}
             </main>
         );
     }
 
-    return (
-        <main className="flex-grow w-full max-w-[65ch] mx-auto px-6 pb-24">
+    const feedContent = (
+        <>
             {posts.map(post => {
                 const dateObj = post.createdAt?.toDate ? post.createdAt.toDate() : new Date(post.createdAt);
                 const dateText = isNaN(dateObj.getTime())
@@ -42,6 +50,7 @@ export default function Feed({
                 const canManage = isAdmin || isAuthor;
 
                 const paragraphs = post.content.split('\n\n');
+                const freq = post.frequency ? getFrequencyById(post.frequency) : null;
 
                 return (
                     <article
@@ -75,11 +84,19 @@ export default function Feed({
                                     <span className="text-xs font-heading font-medium tracking-wide text-sanctuary-ink">
                                         {post.authorName || 'Anonymous Seeker'}
                                     </span>
-                                    <div className="flex items-center gap-2 text-[10px] tracking-widest uppercase opacity-50">
+                                    <div className="flex flex-wrap items-center gap-2 text-[10px] tracking-widest uppercase opacity-50">
                                         <time>{dateText}</time>
                                         {post.status === 'draft' && (
                                             <span className="text-[9px] text-sanctuary-sage border border-sanctuary-sage px-1 leading-none">
                                                 Draft
+                                            </span>
+                                        )}
+                                        {freq && (
+                                            <span
+                                                style={{ color: freq.color }}
+                                                className="text-[9px] font-medium tracking-wider"
+                                            >
+                                                • {freq.name}
                                             </span>
                                         )}
                                     </div>
@@ -97,6 +114,12 @@ export default function Feed({
                     </article>
                 );
             })}
+        </>
+    );
+
+    return hideOuterWrapper ? feedContent : (
+        <main className="flex-grow w-full max-w-[65ch] mx-auto px-6 pb-24">
+            {feedContent}
         </main>
     );
 }

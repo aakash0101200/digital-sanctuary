@@ -1,13 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { collection, query, where, getDocs, doc, updateDoc } from 'firebase/firestore';
+import { collection, query, where, getDocs, doc, updateDoc, getCountFromServer } from 'firebase/firestore';
 import { db } from '../firebase';
 import Emblem from './Emblem';
+import { FREQUENCIES } from '../constants/frequencies';
+import EmotionalSpectrum from './EmotionalSpectrum';
 
 export default function ProfileModal({ isOpen, onClose, user, userProfile, ADMIN_EMAIL, onProfileUpdate }) {
     const [displayName, setDisplayName] = useState('');
     const [postsCount, setPostsCount] = useState(0);
     const [avatarId, setAvatarId] = useState('default');
     const [loading, setLoading] = useState(false);
+    const [frequencyCounts, setFrequencyCounts] = useState({});
+    const [totalTaggedCount, setTotalTaggedCount] = useState(0);
 
     useEffect(() => {
         if (isOpen && user) {
@@ -20,9 +24,32 @@ export default function ProfileModal({ isOpen, onClose, user, userProfile, ADMIN
     const fetchStatsAndMilestone = async () => {
         if (!user) return;
         try {
+            // Get total published thoughts count
             const q = query(collection(db, 'posts'), where("authorId", "==", user.uid), where("status", "==", "published"));
-            const querySnapshot = await getDocs(q);
-            setPostsCount(querySnapshot.size);
+            const totalSnapshot = await getCountFromServer(q);
+            const totalCount = totalSnapshot.data().count;
+            setPostsCount(totalCount);
+
+            // Get count for each individual frequency
+            const counts = {};
+            let totalTagged = 0;
+            const promises = FREQUENCIES.map(async (freq) => {
+                const qFreq = query(
+                    collection(db, 'posts'),
+                    where("authorId", "==", user.uid),
+                    where("status", "==", "published"),
+                    where("frequency", "==", freq.id)
+                );
+                const snapshotFreq = await getCountFromServer(qFreq);
+                const count = snapshotFreq.data().count;
+                if (count > 0) {
+                    counts[freq.id] = count;
+                    totalTagged += count;
+                }
+            });
+            await Promise.all(promises);
+            setFrequencyCounts(counts);
+            setTotalTaggedCount(totalTagged);
         } catch (e) {
             console.error("Error fetching stats:", e);
         }
@@ -163,6 +190,12 @@ export default function ProfileModal({ isOpen, onClose, user, userProfile, ADMIN
                             </span>
                         </div>
                     </div>
+
+                    {/* Emotional Spectrum Visualization */}
+                    <EmotionalSpectrum
+                        frequencyCounts={frequencyCounts}
+                        totalTagged={totalTaggedCount}
+                    />
 
                     {/* Avatar Selector Section */}
                     <div className="mb-8 text-left">

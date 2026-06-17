@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { FREQUENCIES } from '../constants/frequencies';
 
 export default function EditorModal({
     isOpen,
@@ -8,6 +9,7 @@ export default function EditorModal({
     onSaveDraft,
     loading
 }) {
+    const [frequency, setFrequency] = useState('');
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
 
@@ -18,9 +20,11 @@ export default function EditorModal({
             if (editingPost) {
                 setTitle(editingPost.title);
                 setContent(editingPost.content);
+                setFrequency(editingPost.frequency || '');
             } else {
                 setTitle('');
                 setContent('');
+                setFrequency('');
             }
             setTimeout(() => titleInputRef.current?.focus(), 100);
         }
@@ -41,12 +45,12 @@ export default function EditorModal({
 
     const handlePublish = (e) => {
         e.preventDefault();
-        onPublish(title, content);
+        onPublish(title, content, frequency);
     };
 
     const handleSaveDraft = (e) => {
         e.preventDefault();
-        onSaveDraft(title, content);
+        onSaveDraft(title, content, frequency);
     };
 
     return (
@@ -80,7 +84,36 @@ export default function EditorModal({
                     disabled={loading}
                     className="w-full bg-transparent font-body text-lg border-none outline-none resize-none text-sanctuary-ink placeholder-sanctuary-ink placeholder-opacity-30 leading-relaxed"
                 />
-                <div className="mt-8 flex justify-end">
+
+                {/* Frequency selector */}
+                <div className="mt-8 mb-2">
+                    <p className="text-[10px] tracking-widest uppercase opacity-30 mb-3">
+                        Emotional Frequency <span className="opacity-60">(optional)</span>
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                        {FREQUENCIES.map(freq => (
+                            <button
+                                key={freq.id}
+                                type="button"
+                                onClick={() => setFrequency(frequency === freq.id ? '' : freq.id)}
+                                disabled={loading}
+                                className={`px-3 py-1.5 text-[10px] tracking-widest uppercase border transition-all duration-300 focus:outline-none ${
+                                    frequency === freq.id
+                                        ? 'opacity-90 text-white'
+                                        : 'border-sanctuary-stone border-opacity-30 opacity-40 hover:opacity-70'
+                                }`}
+                                style={frequency === freq.id ? {
+                                    backgroundColor: freq.color,
+                                    borderColor: freq.color,
+                                } : {}}
+                            >
+                                {freq.name}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+
+                <div className="mt-6 flex justify-end">
                     <button
                         onClick={handlePublish}
                         disabled={loading}

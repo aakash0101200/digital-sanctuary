@@ -63,7 +63,8 @@ service cloud.firestore {
              data.authorId == request.auth.uid &&
              data.status is string && (data.status == 'draft' || data.status == 'published') &&
              (!('authorName' in data) || (data.authorName is string && data.authorName.size() <= 50)) &&
-             (!('authorAvatar' in data) || (data.authorAvatar is string && data.authorAvatar.size() <= 30));
+             (!('authorAvatar' in data) || (data.authorAvatar is string && data.authorAvatar.size() <= 30)) &&
+             (!('frequency' in data) || (data.frequency is string && data.frequency.size() <= 20));
     }
     function isValidAppSettings(data) {
       return hasRequiredFields(['appTitle']) &&
@@ -130,13 +131,13 @@ service cloud.firestore {
 
       // Admin or approved authors can create posts
       allow create: if (isAdmin() || isApprovedAuthor()) && 
-                       hasOnlyAllowedFields(['title', 'content', 'createdAt', 'authorId', 'status', 'authorName', 'authorAvatar']) &&
+                       hasOnlyAllowedFields(['title', 'content', 'createdAt', 'authorId', 'status', 'authorName', 'authorAvatar', 'frequency']) &&
                        isValidPostData(request.resource.data) &&
                        request.resource.data.authorId == request.auth.uid;
 
       // Admin can update any post, Authors can only update their own if still approved
       allow update: if (isAdmin() || (isApprovedAuthor() && isOwner(resource.data.authorId))) &&
-                       hasOnlyAllowedFields(['title', 'content', 'createdAt', 'authorId', 'status', 'authorName', 'authorAvatar']) &&
+                       hasOnlyAllowedFields(['title', 'content', 'createdAt', 'authorId', 'status', 'authorName', 'authorAvatar', 'frequency']) &&
                        // Prevent changing immutable fields
                        request.resource.data.createdAt == resource.data.createdAt &&
                        request.resource.data.authorId == resource.data.authorId &&

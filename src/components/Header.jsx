@@ -93,9 +93,12 @@ export default function Header({
                         Depart
                     </button>
                 )}
-                <div className="hidden md:block text-sm tracking-widest uppercase opacity-60 hover:opacity-100 transition-opacity duration-300 cursor-pointer select-none">
+                <button
+                    onClick={() => setActiveRoute('resonance')}
+                    className="text-sm tracking-widest uppercase text-sanctuary-sage font-medium hover:opacity-70 transition-opacity duration-300 cursor-pointer focus:outline-none"
+                >
                     States of Being
-                </div>
+                </button>
             </nav>
         </header>
     );

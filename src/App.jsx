@@ -27,6 +27,8 @@ import GuardianModal from './components/GuardianModal';
 import ProfileModal from './components/ProfileModal';
 import SettingsModal from './components/SettingsModal';
 import MembersModal from './components/MembersModal';
+import ResonancePage from './components/ResonancePage';
+import BreathingModal from './components/BreathingModal';
 
 export default function App() {
     const [user, setUser] = useState(null);
@@ -46,6 +48,10 @@ export default function App() {
     const [settingsOpen, setSettingsOpen] = useState(false);
     const [membersOpen, setMembersOpen] = useState(false);
     const [guardianOpen, setGuardianOpen] = useState(false);
+    const [breathingOpen, setBreathingOpen] = useState(false);
+
+    // Active resonance page frequency filter
+    const [activeFrequencyFilter, setActiveFrequencyFilter] = useState(null);
 
     // Editing thought state
     const [editingPost, setEditingPost] = useState(null);
@@ -142,6 +148,13 @@ export default function App() {
                 where("authorId", "==", user.uid),
                 orderBy("createdAt", "desc")
             );
+        } else if (activeRoute === 'resonance' && activeFrequencyFilter) {
+            q = query(
+                postsRef,
+                where("status", "==", "published"),
+                where("frequency", "==", activeFrequencyFilter),
+                orderBy("createdAt", "desc")
+            );
         } else {
             q = query(
                 postsRef,
@@ -163,7 +176,7 @@ export default function App() {
         });
 
         return () => unsub();
-    }, [activeRoute, user]);
+    }, [activeRoute, activeFrequencyFilter, user]);
 
     // Helper: AI check
     const checkContentSafety = async (title, content) => {
@@ -196,7 +209,7 @@ Respond strictly in JSON format with two fields:
     };
 
     // Post Actions
-    const handlePublishPost = async (title, content) => {
+    const handlePublishPost = async (title, content, frequency) => {
         if (!user) return;
         const cleanTitle = title.trim();
         const cleanContent = content.trim();
@@ -227,7 +240,8 @@ Respond strictly in JSON format with two fields:
                     content: cleanContent,
                     status: 'published',
                     authorName: authorName,
-                    authorAvatar: authorAvatar
+                    authorAvatar: authorAvatar,
+                    frequency: frequency || null
                 });
             } else {
                 await addDoc(postsRef, {
@@ -237,7 +251,8 @@ Respond strictly in JSON format with two fields:
                     authorId: user.uid,
                     status: 'published',
                     authorName: authorName,
-                    authorAvatar: authorAvatar
+                    authorAvatar: authorAvatar,
+                    frequency: frequency || null
                 });
             }
             setEditorOpen(false);
@@ -250,7 +265,7 @@ Respond strictly in JSON format with two fields:
         }
     };
 
-    const handleSaveDraft = async (title, content) => {
+    const handleSaveDraft = async (title, content, frequency) => {
         if (!user) return;
         const cleanTitle = title.trim();
         const cleanContent = content.trim();
@@ -272,7 +287,8 @@ Respond strictly in JSON format with two fields:
                     content: cleanContent,
                     status: 'draft',
                     authorName: authorName,
-                    authorAvatar: authorAvatar
+                    authorAvatar: authorAvatar,
+                    frequency: frequency || null
                 });
             } else {
                 await addDoc(postsRef, {
@@ -282,7 +298,8 @@ Respond strictly in JSON format with two fields:
                     authorId: user.uid,
                     status: 'draft',
                     authorName: authorName,
-                    authorAvatar: authorAvatar
+                    authorAvatar: authorAvatar,
+                    frequency: frequency || null
                 });
             }
             setEditorOpen(false);
@@ -348,17 +365,32 @@ Respond strictly in JSON format with two fields:
                 onLogout={handleLogout}
             />
 
-            <Feed
-                posts={posts}
-                loading={loadingPosts}
-                isAdmin={isAdmin}
-                currentUser={user}
-                onEditPost={handleEditPost}
-                onDeletePost={handleDeletePost}
-                activeRoute={activeRoute}
-            />
+            {activeRoute === 'resonance' ? (
+                <ResonancePage
+                    activeFilter={activeFrequencyFilter}
+                    onSelectFilter={setActiveFrequencyFilter}
+                    onClearFilter={() => setActiveFrequencyFilter(null)}
+                    onOpenBreathing={() => setBreathingOpen(true)}
+                    posts={posts}
+                    loadingPosts={loadingPosts}
+                    isAdmin={isAdmin}
+                    currentUser={user}
+                    onEditPost={handleEditPost}
+                    onDeletePost={handleDeletePost}
+                />
+            ) : (
+                <Feed
+                    posts={posts}
+                    loading={loadingPosts}
+                    isAdmin={isAdmin}
+                    currentUser={user}
+                    onEditPost={handleEditPost}
+                    onDeletePost={handleDeletePost}
+                    activeRoute={activeRoute}
+                />
+            )}
 
-            <Footer />
+            <Footer onOpenBreathing={() => setBreathingOpen(true)} />
 
             {/* Overlay Modals */}
             <AuthModal
@@ -404,6 +436,11 @@ Respond strictly in JSON format with two fields:
                 isOpen={membersOpen}
                 onClose={() => setMembersOpen(false)}
                 currentUser={user}
+            />
+
+            <BreathingModal
+                isOpen={breathingOpen}
+                onClose={() => setBreathingOpen(false)}
             />
         </div>
     );
