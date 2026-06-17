@@ -24,20 +24,24 @@ export default function ProfileModal({ isOpen, onClose, user, userProfile, ADMIN
     const fetchStatsAndMilestone = async () => {
         if (!user) return;
         try {
-            // Get total published thoughts count
-            const q = query(collection(db, 'posts'), where("authorId", "==", user.uid), where("status", "==", "published"));
+            // Get total published + journaled thoughts count
+            const q = query(
+                collection(db, 'posts'),
+                where("authorId", "==", user.uid),
+                where("status", "in", ["published", "journal"])
+            );
             const totalSnapshot = await getCountFromServer(q);
             const totalCount = totalSnapshot.data().count;
             setPostsCount(totalCount);
 
-            // Get count for each individual frequency
+            // Get count for each individual frequency (including journal entries)
             const counts = {};
             let totalTagged = 0;
             const promises = FREQUENCIES.map(async (freq) => {
                 const qFreq = query(
                     collection(db, 'posts'),
                     where("authorId", "==", user.uid),
-                    where("status", "==", "published"),
+                    where("status", "in", ["published", "journal"]),
                     where("frequency", "==", freq.id)
                 );
                 const snapshotFreq = await getCountFromServer(qFreq);

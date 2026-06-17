@@ -27,8 +27,12 @@ export default function Feed({
 
     if (posts.length === 0) {
         const emptyContent = (
-            <div className="text-center opacity-50 text-sm tracking-widest uppercase py-20">
-                {activeRoute === 'drafts' ? 'No drafts are currently written.' : 'The sanctuary is quiet.'}
+            <div className="text-center opacity-50 text-sm tracking-widest uppercase py-20 animate-fade-in">
+                {activeRoute === 'drafts' 
+                    ? 'No drafts are currently written.' 
+                    : activeRoute === 'journal' 
+                    ? 'Your private journal is quiet.' 
+                    : 'The sanctuary is quiet.'}
             </div>
         );
         return hideOuterWrapper ? emptyContent : (

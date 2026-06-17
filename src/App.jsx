@@ -148,6 +148,13 @@ export default function App() {
                 where("authorId", "==", user.uid),
                 orderBy("createdAt", "desc")
             );
+        } else if (activeRoute === 'journal' && user) {
+            q = query(
+                postsRef,
+                where("status", "==", "journal"),
+                where("authorId", "==", user.uid),
+                orderBy("createdAt", "desc")
+            );
         } else if (activeRoute === 'resonance' && activeFrequencyFilter) {
             q = query(
                 postsRef,
@@ -312,6 +319,53 @@ Respond strictly in JSON format with two fields:
         }
     };
 
+    const handleSaveJournalPost = async (title, content, frequency) => {
+        if (!user) return;
+        const cleanTitle = title.trim();
+        const cleanContent = content.trim();
+
+        if (!cleanTitle && !cleanContent) {
+            alert("A journal entry must have at least a title or some content.");
+            return;
+        }
+
+        setEditorLoading(true);
+        const authorName = userProfile?.displayName || user.email.split('@')[0];
+        const authorAvatar = userProfile?.avatarId || 'default';
+
+        try {
+            const postsRef = collection(db, 'posts');
+            if (editingPost) {
+                await updateDoc(doc(db, 'posts', editingPost.id), {
+                    title: cleanTitle,
+                    content: cleanContent,
+                    status: 'journal',
+                    authorName: authorName,
+                    authorAvatar: authorAvatar,
+                    frequency: frequency || null
+                });
+            } else {
+                await addDoc(postsRef, {
+                    title: cleanTitle,
+                    content: cleanContent,
+                    createdAt: serverTimestamp(),
+                    authorId: user.uid,
+                    status: 'journal',
+                    authorName: authorName,
+                    authorAvatar: authorAvatar,
+                    frequency: frequency || null
+                });
+            }
+            setEditorOpen(false);
+            setEditingPost(null);
+        } catch (err) {
+            console.error("Save journal entry failed:", err);
+            alert("The sanctuary resisted saving your journal entry.");
+        } finally {
+            setEditorLoading(false);
+        }
+    };
+
     const handleEditPost = (post) => {
         setEditingPost(post);
         setEditorOpen(true);
@@ -407,6 +461,7 @@ Respond strictly in JSON format with two fields:
                 editingPost={editingPost}
                 onPublish={handlePublishPost}
                 onSaveDraft={handleSaveDraft}
+                onSaveJournal={handleSaveJournalPost}
                 loading={editorLoading}
             />
 

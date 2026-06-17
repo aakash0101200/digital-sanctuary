@@ -7,6 +7,7 @@ export default function EditorModal({
     editingPost,
     onPublish,
     onSaveDraft,
+    onSaveJournal,
     loading
 }) {
     const [frequency, setFrequency] = useState('');
@@ -51,6 +52,11 @@ export default function EditorModal({
     const handleSaveDraft = (e) => {
         e.preventDefault();
         onSaveDraft(title, content, frequency);
+    };
+
+    const handleSaveJournal = (e) => {
+        e.preventDefault();
+        onSaveJournal(title, content, frequency);
     };
 
     return (
@@ -120,6 +126,17 @@ export default function EditorModal({
                         className="px-6 py-2 border border-sanctuary-stone text-xs tracking-widest uppercase opacity-70 hover:opacity-100 hover:bg-sanctuary-sage hover:text-sanctuary-linen hover:border-sanctuary-sage transition-all duration-300 focus:outline-none disabled:opacity-30"
                     >
                         {loading ? 'Reflecting...' : (editingPost ? 'Update thought' : 'Breathe into Existence')}
+                    </button>
+                    <button
+                        onClick={handleSaveJournal}
+                        disabled={loading}
+                        className="ml-4 px-6 py-2 border border-sanctuary-stone text-xs tracking-widest uppercase opacity-70 hover:opacity-100 hover:bg-sanctuary-ink hover:text-sanctuary-linen hover:border-sanctuary-ink transition-all duration-300 focus:outline-none disabled:opacity-30 flex items-center gap-1.5"
+                    >
+                        <svg className="w-3.5 h-3.5 opacity-60" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                        <span>{editingPost && editingPost.status === 'journal' ? 'Update Entry' : 'Lock in Journal'}</span>
                     </button>
                     <button
                         onClick={handleSaveDraft}

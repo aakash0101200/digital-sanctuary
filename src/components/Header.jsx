@@ -106,6 +106,14 @@ export default function Header({
                 )}
                 {user && (
                     <button
+                        onClick={() => setActiveRoute('journal')}
+                        className="text-sm tracking-widest uppercase text-sanctuary-sage font-medium hover:opacity-70 transition-opacity duration-300 cursor-pointer focus:outline-none"
+                    >
+                        Journal
+                    </button>
+                )}
+                {user && (
+                    <button
                         onClick={onOpenProfile}
                         className="text-sm tracking-widest uppercase text-sanctuary-sage font-medium hover:opacity-70 transition-opacity duration-300 cursor-pointer focus:outline-none"
                     >

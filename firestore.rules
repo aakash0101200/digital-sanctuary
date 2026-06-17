@@ -61,7 +61,7 @@ service cloud.firestore {
              (data.status == 'published' ? (data.title.size() > 0 && data.content.size() > 0) : (data.title.size() >= 0 && data.content.size() >= 0)) &&
              data.createdAt is timestamp &&
              data.authorId == request.auth.uid &&
-             data.status is string && (data.status == 'draft' || data.status == 'published') &&
+             data.status is string && (data.status == 'draft' || data.status == 'published' || data.status == 'journal') &&
              (!('authorName' in data) || (data.authorName is string && data.authorName.size() <= 50)) &&
              (!('authorAvatar' in data) || (data.authorAvatar is string && data.authorAvatar.size() <= 30)) &&
              (!('frequency' in data) || (data.frequency is string && data.frequency.size() <= 20));
@@ -126,8 +126,10 @@ service cloud.firestore {
 
     // Posts collection rules
     match /posts/{postId} {
-      // Public can read published posts. Owners can read their own (drafts). Admins read all.
-      allow read: if isPublishedPost(resource.data) || isAdmin() || isOwner(resource.data.authorId);
+      // Public can read published posts. Owners can read their own. Admins read all except private journal entries.
+      allow read: if isPublishedPost(resource.data) || 
+                       (isAdmin() && resource.data.status != 'journal') || 
+                       isOwner(resource.data.authorId);
 
       // Admin or approved authors can create posts
       allow create: if (isAdmin() || isApprovedAuthor()) && 
