@@ -34,9 +34,10 @@ export default function Header({
         <header className="w-full max-w-5xl mx-auto px-6 py-8 md:py-20 flex flex-col md:flex-row justify-between items-center md:items-baseline gap-6">
             <h1
                 onClick={handleTitleClick}
-                className="font-heading text-3xl md:text-4xl tracking-wide font-medium select-none cursor-default text-center md:text-left active:opacity-75 transition-opacity"
+                className="font-heading text-3xl md:text-4xl tracking-wide font-medium select-none cursor-pointer text-center md:text-left active:opacity-75 transition-opacity relative group inline-flex items-center justify-center md:justify-start"
             >
-                {appTitle}
+                <span>{appTitle}</span>
+                <span className="inline-block w-[1.5px] h-[0.95em] bg-sanctuary-sage ml-2.5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 animate-cursor-pulse pointer-events-none" />
             </h1>
             <nav className="flex flex-wrap justify-center md:justify-end gap-x-6 gap-y-3 items-center">
                 {canWrite && (

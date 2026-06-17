@@ -28,3 +28,17 @@ body {
 .modal-fade-in {
     transition: opacity 500s ease-in-out;
 }
+
+@keyframes cursor-pulse {
+    0%, 100% {
+        opacity: 0.15;
+    }
+    50% {
+        opacity: 0.8;
+    }
+}
+
+.animate-cursor-pulse {
+    animation: cursor-pulse 1.8s ease-in-out infinite;
+}
+
